@@ -21,17 +21,16 @@
 
 % Legacy команда \bibliographystyle{gost-numeric.bbx} удалена:
 % biblatex + biber не используют bibtex'овский bibliographystyle.
-\usepackage[parentracker=true,
-            backend=biber,
-            hyperref=true,
-            bibencoding=utf8,
-            style=numeric-comp,
-            language=auto,
-            autolang=other,
-            citestyle=gost-numeric,
-            defernumbers=true,
-            bibstyle=gost-numeric,
-            sorting=none
+% Минимальный набор опций ГОСТ-стиля; deprecated parentracker
+% и проблемная пара defernumbers+sorting=none убраны — они вызывали
+% Missing number в \printbibliography.
+\usepackage[
+    backend=biber,
+    bibencoding=utf8,
+    style=gost-numeric,
+    language=auto,
+    autolang=other,
+    sorting=ynt
 ]{biblatex}
 \addbibresource{refs.bib}
 
