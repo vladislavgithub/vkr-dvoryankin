@@ -8,7 +8,8 @@
 
 % Шрифты подключаются явно из ./fonts/ — независимо от системных установок,
 % работает одинаково локально и в CI.
-\defaultfontfeatures{Path=fonts/}
+% Ligatures=TeX включает: --- → —, -- → –, `` → " и т.д.
+\defaultfontfeatures{Path=fonts/, Ligatures=TeX}
 
 \setmainfont{FontsFree-Net-times-new-roman.ttf}
 \setromanfont{FontsFree-Net-times-new-roman.ttf}
