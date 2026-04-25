@@ -19,6 +19,10 @@ jobs:
           root_file: main.tex
           latexmk_use_xelatex: true
           latexmk_shell_escape: true
+          # Без -halt-on-error: позволить xelatex дойти до конца первого
+          # прохода, чтобы корректно записать .bcf для biber. Иначе
+          # biblatex+biber падают с "Incomplete bcf file".
+          args: -pdf -file-line-error -interaction=nonstopmode
 
       - name: Rename PDF
         run: |
