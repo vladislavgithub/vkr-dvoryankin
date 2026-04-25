@@ -1,0 +1,56 @@
+\section{Проектирование и реализация сервиса}
+\thispagestyle{plain}
+
+% TODO: ~16 страниц --- инженерная глава.
+
+\subsection{Архитектура клиент-сервер}
+% C4-диаграммы (контекст, контейнеры) обновлённые относительно НИР.
+% Принципиальное отличие: серверный компонент собственной разработки
+% вместо Cloud Firestore. Обоснование архитектурных решений.
+
+\subsection{Технологический стек}
+% Frontend: Flutter 3.x + Riverpod 2.6 + Material Design 3,
+% единая кодовая база на Web/iOS/Android/macOS.
+% Backend: Go 1.22 + Gin, gorilla/websocket для real-time.
+% БД: PostgreSQL 16. Кэш и pub/sub: Redis 7.
+% Reverse proxy: Caddy с автоматическим TLS.
+% Контейнеризация: Docker + Docker Compose.
+% Мониторинг: Prometheus + Grafana.
+% Хостинг: Selectel/Timeweb (Российская Федерация).
+
+\subsection{Структура базы данных}
+% ER-диаграмма основных коллекций: users, courses, question\_banks,
+% questions, rooms, sessions, participants, answers, gamification.
+% Схема PostgreSQL с миграциями (golang-migrate).
+% Индексы и стратегии партиционирования.
+
+\subsection{REST API и WebSocket-протокол}
+% Принципы построения REST API (OpenAPI спецификация).
+% WebSocket-протокол для интерактивных сессий: типы событий,
+% форматы сообщений, обработка переподключений.
+% Аутентификация: JWT-токены.
+
+\subsection{Интеграция с университетской LMS edu.gubkin}
+% Архитектура интеграции: импорт банка вопросов в форматах
+% Moodle XML / GIFT / QTI в зависимости от поддержки в edu.gubkin.
+% Маппинг типов вопросов между LMS и сервисом.
+% Сценарий преподавателя: выгрузка из edu.gubkin
+% $\rightarrow$ загрузка в EduQuiz $\rightarrow$ настройка геймификации
+% $\rightarrow$ проведение сессии.
+
+\subsection{Реализация клиента и серверной части}
+% Структура Flutter-проекта: feature-first архитектура.
+% Структура Go-проекта: слои handlers/services/repository.
+% Ключевые алгоритмы: подсчёт XP, SM-2, лидерборд.
+% Адаптивная вёрстка: phone, tablet, desktop, web.
+
+\subsection{Развёртывание}
+% Docker Compose для production: api, postgres, redis, prometheus, grafana, caddy.
+% Конфигурация Caddy и автоматический выпуск TLS.
+% CI/CD на GitHub Actions: сборка, тесты, публикация Docker-образов.
+% Развёртывание на VPS Selectel/Timeweb: 2 vCPU, 4 ГБ RAM, 40 ГБ SSD.
+
+\textbf{Выводы по главе 3.}
+% Что реализовано, какие технологические решения приняты и почему.
+
+\newpage

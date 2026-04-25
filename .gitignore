@@ -32,6 +32,7 @@
 # Output (на CI собирается, локально игнорируем)
 build/
 out/
+main.pdf
 
 # OS
 .DS_Store

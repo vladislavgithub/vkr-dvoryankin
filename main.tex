@@ -1,0 +1,53 @@
+% Магистерская диссертация Дворянкина В.В. (АСМ-24-04)
+% Тема: «Разработка моделей и сервиса для интерактивного взаимодействия с обучающимися»
+% Научный руководитель: Волков Д.А., к.т.н., доцент кафедры АСУ
+% РГУ Нефти и Газа (НИУ) им. И.М. Губкина, 2026
+%
+% Шаблон: gitea.volkov.top/edu/edu-tex-template (Stulk3, ValeryVerkhoturov)
+
+\documentclass[14pt, a4paper]{extarticle}
+
+%%%%%%%%%%%% Пакеты %%%%%%%%%%%%%%%%%%
+\include{Settings/packages}
+
+%%%%%%%%%%%% Формат %%%%%%%%%%%%%%%%%%
+\include{Settings/format}
+
+% Поля по ГОСТ: лево 3 см, право 1 см, верх/низ 2 см
+\usepackage[left=3cm,right=1cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%%%%%%%%%%%% Листинги %%%%%%%%%%%%%%%%%%
+\include{Settings/listings}
+
+\begin{document}
+
+%%%%%%%%%%%%%%% Макрокоманды %%%%%%%%%%%%%
+\include{macros}
+
+%%%%%%%%%%%% Титульный лист %%%%%%%%%%%%%%
+% TODO: заменить на ВКР-вариант (магистерский титульник кафедры АСУ),
+% подготовленный с Волковым Д.А.
+\includepdf[pages=-]{TitlePages/Титульный_лист_КР.pdf}
+\includepdf[pages=-]{TitlePages/Задание_на_КР.pdf}
+
+%%%%%%%%%%%% Содержание %%%%%%%%%%%%%%%%%%
+\include{tocpage}
+
+%%%%%%%%%%%% Основной текст %%%%%%%%%%%%%%
+\include{chapters/00-intro}
+\include{chapters/01-analysis}
+\include{chapters/02-models}
+\include{chapters/03-implementation}
+\include{chapters/04-reliability}
+\include{chapters/05-experiment}
+\include{chapters/06-conclusion}
+
+%%%%%%%%%%%% Источники %%%%%%%%%%%%%%%%%%
+\include{bibpage}
+
+%%%%%%%%%%%% Приложения %%%%%%%%%%%%%%%%%%
+\include{annex}
+
+\end{document}

@@ -1,0 +1,17 @@
+## Локальная сборка PDF без установки TeX Live.
+## Запуск: docker compose run --rm latex
+
+services:
+  latex:
+    image: mingc/latex
+    working_dir: /data
+    volumes:
+      - .:/data
+      - ./fonts:/root/.fonts
+    command: >
+      bash -lc "
+        xelatex -interaction=nonstopmode -shell-escape main.tex &&
+        biber main || true &&
+        xelatex -interaction=nonstopmode -shell-escape main.tex &&
+        xelatex -interaction=nonstopmode -shell-escape main.tex
+      "
