@@ -4,7 +4,13 @@
 
 \usepackage{tocvsec2} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\usepackage[labelsep=period]{caption}
+% Подписи рисунков и таблиц по требованию кафедры АСУ:
+% «Рисунок 1 — Описание», разделитель — длинное тире.
+\usepackage[labelsep=endash]{caption}
+% Подписи рисунков центрируются (default), подписи таблиц
+% выравниваются по правому краю и стоят над таблицей.
+\captionsetup[table]{justification=raggedleft, singlelinecheck=off, position=above}
+\captionsetup[figure]{justification=centering, position=below}
 
 \usepackage{titletoc}
 

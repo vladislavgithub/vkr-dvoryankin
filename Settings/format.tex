@@ -93,6 +93,19 @@
 % Перенос текста при переполнении
 \emergencystretch=25pt
 
+% Сквозная нумерация рисунков, таблиц, формул, листингов (по требованиям кафедры).
+% При желании заменить на двухуровневую: \counterwithin{figure}{section} и т.д.
+% Сейчас оставляем сквозную --- она проще для отслеживания ссылок.
+
+% Запрет на висячие строки (orphans) и заголовков, оторванных от текста (widows).
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+
+% Между абзацами не должно быть дополнительного интервала
+% (явно фиксируем, чтобы Word-style вставки не привнесли его при копировании).
+\setlength{\parskip}{0pt}
+
 % \dottedcontents{<section>}[<left>]{<above-code>}
 % {<label width>}{<leader width>}
 \dottedcontents{section}[4em]{\bfseries}{4em}{1pc}
