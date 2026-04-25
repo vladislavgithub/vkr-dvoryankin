@@ -14,13 +14,16 @@
 \setromanfont{FontsFree-Net-times-new-roman.ttf}
 \newfontfamily\cyrillicfont{FontsFree-Net-times-new-roman.ttf}
 
+% Source Code Pro: загружаем Regular + Bold явно из файла.
+% Italic-вариант файла — variable font; пропускаем, чтобы не падать
+% на старых сборках TeX Live; курсив синтезируется fontspec'ом при необходимости.
 \setmonofont{SourceCodePro-Regular.ttf}[
     BoldFont = SourceCodePro-Bold.ttf,
-    ItalicFont = SourceCodePro-Italic-VariableFont_wght.ttf,
+    AutoFakeSlant = 0.2,
 ]
 \newfontfamily{\cyrillicfonttt}{SourceCodePro-Regular.ttf}[
     BoldFont = SourceCodePro-Bold.ttf,
-    ItalicFont = SourceCodePro-Italic-VariableFont_wght.ttf,
+    AutoFakeSlant = 0.2,
 ]
 
 
