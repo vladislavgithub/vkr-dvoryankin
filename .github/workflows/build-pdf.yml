@@ -19,12 +19,6 @@ jobs:
           root_file: main.tex
           latexmk_use_xelatex: true
           latexmk_shell_escape: true
-          extra_system_packages: |
-            inkscape
-          pre_compile: |
-            mkdir -p /root/.fonts
-            cp -r fonts/* /root/.fonts/ 2>/dev/null || true
-            fc-cache -fv
 
       - name: Rename PDF
         run: |

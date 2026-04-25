@@ -5,12 +5,23 @@
 % Шрифт для курсовой Times New Roman, размер – 14 пт.
 \setdefaultlanguage[spelling=modern]{russian}
     \setotherlanguage{english}
-    
-\setmonofont{Source Code Pro}
-\newfontfamily{\cyrillicfonttt}{Source Code Pro}
-\setmainfont{Times New Roman} 
-\setromanfont{Times New Roman} 
-\newfontfamily\cyrillicfont{Times New Roman}
+
+% Шрифты подключаются явно из ./fonts/ — независимо от системных установок,
+% работает одинаково локально и в CI.
+\defaultfontfeatures{Path=fonts/}
+
+\setmainfont{FontsFree-Net-times-new-roman.ttf}
+\setromanfont{FontsFree-Net-times-new-roman.ttf}
+\newfontfamily\cyrillicfont{FontsFree-Net-times-new-roman.ttf}
+
+\setmonofont{SourceCodePro-Regular.ttf}[
+    BoldFont = SourceCodePro-Bold.ttf,
+    ItalicFont = SourceCodePro-Italic-VariableFont_wght.ttf,
+]
+\newfontfamily{\cyrillicfonttt}{SourceCodePro-Regular.ttf}[
+    BoldFont = SourceCodePro-Bold.ttf,
+    ItalicFont = SourceCodePro-Italic-VariableFont_wght.ttf,
+]
 
 
 
