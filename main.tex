@@ -13,8 +13,9 @@
 %%%%%%%%%%%% Формат %%%%%%%%%%%%%%%%%%
 \include{Settings/format}
 
-% Поля по ГОСТ: лево 3 см, право 1 см, верх/низ 2 см
-\usepackage[left=3cm,right=1cm,top=2cm,bottom=2cm]{geometry}
+% Поля по требованиям кафедры АСУ: верх/низ 20 мм, лево 30 мм, право 15 мм.
+% Источник: https://asugubkin.ru/study/diplom.html
+\usepackage[top=20mm,bottom=20mm,left=30mm,right=15mm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
@@ -36,13 +37,13 @@
 \include{tocpage}
 
 %%%%%%%%%%%% Основной текст %%%%%%%%%%%%%%
+% Структура — 3 главы по требованиям кафедры АСУ Губкинского ВУЗа
+% (https://asugubkin.ru/study/diplom.html)
 \include{chapters/00-intro}
 \include{chapters/01-analysis}
-\include{chapters/02-models}
-\include{chapters/03-implementation}
-\include{chapters/04-reliability}
-\include{chapters/05-experiment}
-\include{chapters/06-conclusion}
+\include{chapters/02-models-and-design}
+\include{chapters/03-reliability-and-experiment}
+\include{chapters/04-conclusion}
 
 %%%%%%%%%%%% Источники %%%%%%%%%%%%%%%%%%
 \include{bibpage}
