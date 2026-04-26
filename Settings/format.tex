@@ -123,6 +123,15 @@
 \counterwithin{table}{section}
 \counterwithin{equation}{section}
 \AtBeginDocument{\counterwithin{lstlisting}{section}}
+% \thesection у нас = «ГЛАВА N», поэтому стандартный
+% \thefigure = \thesection.\arabic{figure} давал «ГЛАВА N.M».
+% Переопределяем все счётчики на чистое «N.M».
+\renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
+\renewcommand{\thetable}{\arabic{section}.\arabic{table}}
+\renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+\AtBeginDocument{%
+    \renewcommand{\thelstlisting}{\arabic{section}.\arabic{lstlisting}}%
+}
 
 % Запрет на висячие строки (orphans) и заголовков, оторванных от текста (widows).
 \widowpenalty=10000
