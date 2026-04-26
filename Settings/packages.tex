@@ -11,18 +11,17 @@
 % «Рисунок». \AtBeginDocument не работает — polyglossia сбрасывает
 % после нас. Используем \addto\captionsrussian — стандартный
 % механизм babel/polyglossia, выполняется при выборе языка.
-% Polyglossia при активации русского пересоздаёт caption-настройки.
-% Кладём ВСЁ в \captionsrussian — переопределение имён И всех
-% captionsetup. Тогда последним применяется наш labelsep=endash,
-% и подпись становится «Таблица 1.1 — Название» как требует кафедра.
+% Имена «Рисунок» и «Таблица» — через captionsrussian (после polyglossia).
+% labelsep уже задан опцией пакета caption, точку добавлял misccorr (отключён).
 \addto\captionsrussian{%
     \renewcommand{\figurename}{Рисунок}%
     \renewcommand{\tablename}{Таблица}%
-    \captionsetup{labelsep=endash}%
-    \captionsetup[table]    {labelsep=endash, justification=raggedleft, singlelinecheck=off, position=above}%
-    \captionsetup[figure]   {labelsep=endash, justification=centering,  singlelinecheck=on,  position=below}%
-    \captionsetup[lstlisting]{labelsep=endash, justification=centering, singlelinecheck=on,  position=below}%
 }
+% Отдельные настройки выравнивания и позиции — глобально в preamble.
+% Внутри captionsrussian они кэшируются неправильно и не применяются.
+\captionsetup[table]    {labelsep=endash, justification=raggedleft, singlelinecheck=off, position=above}
+\captionsetup[figure]   {labelsep=endash, justification=centering,  singlelinecheck=on,  position=below}
+\captionsetup[lstlisting]{labelsep=endash, justification=centering, singlelinecheck=on,  position=below}
 
 \usepackage{titletoc}
 
