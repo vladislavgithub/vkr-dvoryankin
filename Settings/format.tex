@@ -187,8 +187,10 @@
     {\fontsize{14pt}{17pt}\bfseries\selectfont}
     {\thesubsection.}{0.5em}{}
 % \titlespacing*{<команда>}{<отступ слева>}{<до>}{<после>}
-\titlespacing*{\section}      {1.25cm}{0pt}{0pt}
-\titlespacing*{name=\section,numberless}{1.25cm}{0pt}{0pt}
+% Заголовки глав (\section и \section*) — с самого левого края (0pt).
+% Подразделы (\subsection) — с абзацным отступом 1.25 см.
+\titlespacing*{\section}      {0pt}{0pt}{0pt}
+\titlespacing*{name=\section,numberless}{0pt}{0pt}{0pt}
 \titlespacing*{\subsection}   {1.25cm}{0pt}{0pt}
 
 % настройка подсветки кода и окружения для листингов
