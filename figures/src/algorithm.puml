@@ -1,0 +1,67 @@
+@startuml algorithm
+skinparam shadowing false
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 13
+skinparam ActivityBackgroundColor #FAFAFA
+skinparam ActivityBorderColor #444
+
+title Алгоритм работы сервиса EduQuiz
+
+start
+:Запуск приложения;
+:Инициализация Flutter / Riverpod;
+
+if (Действующий JWT в Secure Storage?) then (да)
+    :Восстановить сессию;
+else (нет)
+    :Экран входа / регистрации;
+    :POST /api/v1/auth/login;
+    if (Успешно?) then (да)
+        :Сохранить JWT в Secure Storage;
+    else (нет)
+        :Сообщение об ошибке;
+        stop
+    endif
+endif
+
+:Получить роль пользователя;
+
+if (Роль) then (преподаватель)
+    :Кабинет преподавателя;
+    :Создать или открыть курс;
+    :Импортировать банк вопросов\n(edu.gubkin / Moodle XML / GIFT / CSV);
+    :Создать комнату — POST /api/v1/rooms;
+    :Сгенерирован шестизначный код;
+    :Открыть WebSocket / ws/rooms/{id};
+    repeat
+        :next() — активировать следующий вопрос;
+        :Транслировать question.activated;
+        :Принимать ответы участников в реальном времени;
+        :Показ распределения ответов;
+    repeat while (Есть ещё вопрос?) is (да)
+    -> нет;
+    :Завершить сессию;
+    :Выгрузить отчёт (PDF/CSV);
+else (студент)
+    :Главный экран — ввод кода комнаты;
+    :POST /api/v1/rooms/join;
+    if (Комната найдена?) then (да)
+        :Зал ожидания;
+        :Подписка на question.activated;
+        repeat
+            :Получить новый вопрос по WS;
+            :Выбрать ответ;
+            :POST /api/v1/rooms/{id}/answers\n(Idempotency-Key);
+            :Сервер: подсчёт XP, SM-2, запись в БД;
+            :Получить leaderboard.updated;
+        repeat while (Сессия активна?) is (да)
+        -> нет;
+        :Финальный экран:\nрезультаты, новые бейджи;
+        :Опционально — карточки SM-2 на повторение;
+    else (нет)
+        :Сообщение об ошибке;
+    endif
+endif
+
+stop
+@enduml

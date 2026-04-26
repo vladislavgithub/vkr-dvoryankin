@@ -1,0 +1,31 @@
+@startuml c4-containers
+!include <C4/C4_Container>
+
+title Контейнерная диаграмма C4 сервиса EduQuiz
+
+LAYOUT_WITH_LEGEND()
+
+Person(student, "Студент")
+Person(teacher, "Преподаватель")
+
+System_Boundary(eq, "EduQuiz") {
+    Container(client, "Flutter-клиент", "Flutter 3.35 / Dart, Riverpod, Material 3", "Web / iOS / Android / macOS. UI, real-time подключение по WebSocket, локальное состояние.")
+    Container(caddy,  "Caddy", "Caddy 2 + автоматический TLS", "Обратный прокси и единая точка входа. TLS-терминация, rate limiting, балансировка между инстансами API.")
+    Container(api,    "EduQuiz API", "Go 1.25 / Gin, gorilla/websocket", "REST + WebSocket. Бизнес-логика: курсы, банки вопросов, сессии, XP, SM-2, JWT-аутентификация.")
+    ContainerDb(pg,   "PostgreSQL", "PostgreSQL 16, master + replica", "Единственный источник истины: пользователи, курсы, сессии, ответы, состояния SM-2.")
+    ContainerDb(redis,"Redis", "Redis 7", "Кеш, refresh-токены, pub/sub-шина событий между инстансами API.")
+}
+
+System_Ext(edugubkin, "edu.gubkin", "Университетская LMS")
+System_Ext(prom, "Prometheus + Grafana", "Мониторинг и алертинг")
+
+Rel(student, client, "Использует", "HTTPS / WebSocket")
+Rel(teacher, client, "Использует", "HTTPS / WebSocket")
+Rel(client,  caddy,  "REST-запросы и WebSocket", "HTTPS / WSS")
+Rel(caddy,   api,    "Проксирует", "HTTP / WS")
+Rel(api,     pg,     "Чтение/запись", "SQL, pgx/v5")
+Rel(api,     redis,  "Кеш и pub/sub", "Redis protocol")
+Rel(api,     edugubkin, "Импорт банка вопросов", "HTTPS / файлы")
+Rel(api,     prom,   "Метрики /metrics", "HTTP")
+
+@enduml

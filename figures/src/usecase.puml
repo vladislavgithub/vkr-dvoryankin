@@ -1,0 +1,52 @@
+@startuml usecase
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 14
+skinparam ActorStyle awesome
+
+title Диаграмма прецедентов сервиса EduQuiz
+
+actor "Студент" as Student
+actor "Преподаватель" as Teacher
+actor "Администратор" as Admin
+
+rectangle "EduQuiz" {
+    usecase "Регистрация / вход" as UC_Login
+    usecase "Создать курс" as UC_CreateCourse
+    usecase "Импортировать банк\nвопросов из edu.gubkin" as UC_ImportBank
+    usecase "Создать комнату\nи запустить сессию" as UC_RunSession
+    usecase "Управлять ходом\nинтерактива (next, stop)" as UC_ControlSession
+    usecase "Просматривать\nаналитику" as UC_Analytics
+
+    usecase "Подключиться к комнате\nпо коду" as UC_Join
+    usecase "Ответить на вопрос" as UC_Answer
+    usecase "Повторять материал\nпо SM-2" as UC_Review
+    usecase "Просматривать\nсвой прогресс и бейджи" as UC_Progress
+
+    usecase "Управлять\nпользователями" as UC_ManageUsers
+    usecase "Управлять курсами\nвсех преподавателей" as UC_ManageCourses
+}
+
+' Преподаватель
+Teacher --> UC_Login
+Teacher --> UC_CreateCourse
+Teacher --> UC_ImportBank
+Teacher --> UC_RunSession
+Teacher --> UC_ControlSession
+Teacher --> UC_Analytics
+
+' Студент
+Student --> UC_Login
+Student --> UC_Join
+Student --> UC_Answer
+Student --> UC_Review
+Student --> UC_Progress
+
+' Администратор
+Admin --> UC_Login
+Admin --> UC_ManageUsers
+Admin --> UC_ManageCourses
+
+@enduml
