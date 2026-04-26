@@ -11,16 +11,13 @@
 % «Рисунок». \AtBeginDocument не работает — polyglossia сбрасывает
 % после нас. Используем \addto\captionsrussian — стандартный
 % механизм babel/polyglossia, выполняется при выборе языка.
+% Polyglossia при активации русского пересоздаёт caption-настройки.
+% Кладём ВСЁ в \captionsrussian — переопределение имён И всех
+% captionsetup. Тогда последним применяется наш labelsep=endash,
+% и подпись становится «Таблица 1.1 — Название» как требует кафедра.
 \addto\captionsrussian{%
     \renewcommand{\figurename}{Рисунок}%
     \renewcommand{\tablename}{Таблица}%
-}
-% Подписи рисунков центрируются (default), подписи таблиц
-% выравниваются по правому краю и стоят над таблицей.
-% Применяем через \AtBeginDocument: иначе polyglossia/babel сбрасывает
-% labelsep при активации русского языка, и подпись становится
-% «Таблица 1.1. ...» вместо требуемого «Таблица 1.1 — ...».
-\AtBeginDocument{%
     \captionsetup{labelsep=endash}%
     \captionsetup[table]    {labelsep=endash, justification=raggedleft, singlelinecheck=off, position=above}%
     \captionsetup[figure]   {labelsep=endash, justification=centering,  singlelinecheck=on,  position=below}%
