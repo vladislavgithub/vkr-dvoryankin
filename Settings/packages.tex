@@ -7,21 +7,19 @@
 % Подписи рисунков и таблиц по требованию кафедры АСУ:
 % «Рисунок 1 — Описание», разделитель — длинное тире.
 \usepackage[labelsep=endash]{caption}
-% Polyglossia ставит \figurename = «Рис.» (с точкой), нам нужно
-% «Рисунок». \AtBeginDocument не работает — polyglossia сбрасывает
-% после нас. Используем \addto\captionsrussian — стандартный
-% механизм babel/polyglossia, выполняется при выборе языка.
-% Имена «Рисунок» и «Таблица» — через captionsrussian (после polyglossia).
-% labelsep уже задан опцией пакета caption, точку добавлял misccorr (отключён).
-\addto\captionsrussian{%
+% Polyglossia сбрасывает \figurename на «Рис.» при активации русского
+% языка, поэтому \renewcommand{\figurename}{...} в преамбуле и даже
+% \AtBeginDocument срабатывают ненадёжно. Самый прямой способ —
+% задать имя метки в caption-пакете через name=..., минуя \figurename.
+\captionsetup[table]    {name=Таблица, labelsep=endash, justification=raggedleft, singlelinecheck=off, position=above}
+\captionsetup[figure]   {name=Рисунок, labelsep=endash, justification=centering,  singlelinecheck=on,  position=below}
+\captionsetup[lstlisting]{labelsep=endash, justification=centering, singlelinecheck=on,  position=below}
+% Дублируем через \AtBeginDocument для пакетов, читающих \figurename
+% напрямую (например, hyperref для подписей якорей).
+\AtBeginDocument{%
     \renewcommand{\figurename}{Рисунок}%
     \renewcommand{\tablename}{Таблица}%
 }
-% Отдельные настройки выравнивания и позиции — глобально в preamble.
-% Внутри captionsrussian они кэшируются неправильно и не применяются.
-\captionsetup[table]    {labelsep=endash, justification=raggedleft, singlelinecheck=off, position=above}
-\captionsetup[figure]   {labelsep=endash, justification=centering,  singlelinecheck=on,  position=below}
-\captionsetup[lstlisting]{labelsep=endash, justification=centering, singlelinecheck=on,  position=below}
 
 \usepackage{titletoc}
 

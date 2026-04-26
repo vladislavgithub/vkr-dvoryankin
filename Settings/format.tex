@@ -193,11 +193,14 @@
     {\fontsize{14pt}{17pt}\bfseries\raggedright\selectfont}
     {\hspace*{1.25cm}\thesubsection.}{0.5em}{}
 % \titlespacing*{<команда>}{<отступ слева>}{<до>}{<после>}
-% Заголовки глав (\section и \section*) — с самого левого края (0pt).
-% Подразделы (\subsection) — с абзацным отступом 1.25 см.
+% Все заголовки — левый край 0pt; абзацный отступ 1.25 см для метки
+% («ГЛАВА N.», «N.M.») задаётся через \hspace*{1.25cm} в \titleformat.
+% Это даёт «отступ первой строки 1.25 / отступ слева 0»: метка стоит
+% с абзацным отступом, а перенос продолжающихся строк уходит к левому
+% краю — единый стиль для глав и подразделов.
 \titlespacing*{\section}      {0pt}{0pt}{0pt}
 \titlespacing*{name=\section,numberless}{0pt}{0pt}{0pt}
-\titlespacing*{\subsection}   {1.25cm}{0pt}{0pt}
+\titlespacing*{\subsection}   {0pt}{0pt}{0pt}
 
 % настройка подсветки кода и окружения для листингов
 %\usemintedstyle{colorful} % делает подсветку для кода
