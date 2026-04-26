@@ -138,25 +138,27 @@
 \renewcommand{\thesection}{ГЛАВА \arabic{section}}
 \renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
 
-% Размеры заголовков по требованию кафедры:
-%   - Главы (\section): 16 pt, ЖИРНЫЙ ПРОПИСНЫМИ, по центру
-%   - Подразделы (\subsection): 14 pt, жирным (обычный регистр)
-%   - Безномерные (\section* — Введение, Заключение): 14 pt, жирным, по центру
-% Базовый размер документа — 14 pt, поэтому остальной текст идёт 14 pt.
+% Размеры и расположение заголовков по требованию кафедры:
+%   - Главы (\section): 16 pt, ЖИРНЫЙ ПРОПИСНЫМИ
+%   - Подразделы (\subsection): 14 pt, жирным
+%   - Безномерные (\section* — Введение, Заключение): 14 pt, жирным
+% Все заголовки выравниваются по левому краю с абзацным отступом
+% 1.25 см. Интервалы перед/после заголовков — минимальные
+% (как обычный абзац), без «Word-style» дополнительных промежутков.
 \usepackage{titlesec}
-% В разделе \thesection уже заглавные («ГЛАВА 1»). Применяем
-% \MakeUppercase к самому названию через 5-й аргумент \titleformat.
 \titleformat{\section}
-    {\fontsize{16pt}{19pt}\bfseries\selectfont\centering}
+    {\fontsize{16pt}{19pt}\bfseries\selectfont}
     {\thesection.}{0.5em}{\MakeUppercase}
 \titleformat{name=\section,numberless}
-    {\fontsize{14pt}{17pt}\bfseries\selectfont\centering}
+    {\fontsize{14pt}{17pt}\bfseries\selectfont}
     {}{0pt}{}
 \titleformat{\subsection}
     {\fontsize{14pt}{17pt}\bfseries\selectfont}
     {\thesubsection.}{0.5em}{}
-\titlespacing*{\section}      {0pt}{18pt}{12pt}
-\titlespacing*{\subsection}   {0pt}{12pt}{6pt}
+% \titlespacing*{<команда>}{<отступ слева>}{<до>}{<после>}
+\titlespacing*{\section}      {1.25cm}{0pt}{0pt}
+\titlespacing*{name=\section,numberless}{1.25cm}{0pt}{0pt}
+\titlespacing*{\subsection}   {1.25cm}{0pt}{0pt}
 
 % настройка подсветки кода и окружения для листингов
 %\usemintedstyle{colorful} % делает подсветку для кода
