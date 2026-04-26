@@ -17,11 +17,15 @@
 }
 % Подписи рисунков центрируются (default), подписи таблиц
 % выравниваются по правому краю и стоят над таблицей.
-% labelsep=endash повторяем явно — иначе captionsetup сбрасывает
-% его на дефолт (двоеточие/точка).
-\captionsetup[table]    {labelsep=endash, justification=raggedleft, singlelinecheck=off, position=above}
-\captionsetup[figure]   {labelsep=endash, justification=centering,  singlelinecheck=on,  position=below}
-\captionsetup[lstlisting]{labelsep=endash, justification=centering, singlelinecheck=on,  position=below}
+% Применяем через \AtBeginDocument: иначе polyglossia/babel сбрасывает
+% labelsep при активации русского языка, и подпись становится
+% «Таблица 1.1. ...» вместо требуемого «Таблица 1.1 — ...».
+\AtBeginDocument{%
+    \captionsetup{labelsep=endash}%
+    \captionsetup[table]    {labelsep=endash, justification=raggedleft, singlelinecheck=off, position=above}%
+    \captionsetup[figure]   {labelsep=endash, justification=centering,  singlelinecheck=on,  position=below}%
+    \captionsetup[lstlisting]{labelsep=endash, justification=centering, singlelinecheck=on,  position=below}%
+}
 
 \usepackage{titletoc}
 

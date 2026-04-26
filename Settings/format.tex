@@ -178,13 +178,13 @@
 % (как обычный абзац), без «Word-style» дополнительных промежутков.
 \usepackage{titlesec}
 \titleformat{\section}
-    {\fontsize{16pt}{19pt}\bfseries\selectfont}
+    {\fontsize{16pt}{19pt}\bfseries\raggedright\selectfont}
     {\thesection.}{0.5em}{\MakeUppercase}
 \titleformat{name=\section,numberless}
-    {\fontsize{14pt}{17pt}\bfseries\selectfont}
+    {\fontsize{14pt}{17pt}\bfseries\raggedright\selectfont}
     {}{0pt}{}
 \titleformat{\subsection}
-    {\fontsize{14pt}{17pt}\bfseries\selectfont}
+    {\fontsize{14pt}{17pt}\bfseries\raggedright\selectfont}
     {\thesubsection.}{0.5em}{}
 % \titlespacing*{<команда>}{<отступ слева>}{<до>}{<после>}
 % Заголовки глав (\section и \section*) — с самого левого края (0pt).
