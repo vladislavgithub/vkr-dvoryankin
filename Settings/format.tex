@@ -155,13 +155,15 @@
 % для нумерованных глав (\section{...}) и безномерных (\section*{...}).
 % Это решает проблему с label-width 9em, который смещал безномерные
 % строки (ВВЕДЕНИЕ, ЗАКЛЮЧЕНИЕ, ПРИЛОЖЕНИЕ N) за левый край страницы.
+% В оглавлении все строки 14 pt (как и основной текст);
+% жирным — только записи section (главы и Введение/Заключение/...).
 \titlecontents{section}[0pt]
-    {}                                                % above-code
+    {\fontsize{14pt}{17pt}\selectfont}                % above-code
     {\bfseries\thecontentslabel.\quad}                % numbered: «ГЛАВА N. »
-    {\bfseries}                                       % numberless: имя сразу
+    {\bfseries}                                       % numberless
     {\bfseries\titlerule*[6pt]{.}\contentspage}       % filler + page
 \titlecontents{subsection}[1.25cm]
-    {}
+    {\fontsize{14pt}{17pt}\selectfont}
     {\thecontentslabel.\quad}
     {}
     {\titlerule*[6pt]{.}\contentspage}
@@ -177,15 +179,19 @@
 % 1.25 см. Интервалы перед/после заголовков — минимальные
 % (как обычный абзац), без «Word-style» дополнительных промежутков.
 \usepackage{titlesec}
+% Метка заголовка («ГЛАВА N.», «N.M.») сдвинута на 1.25 см от
+% левого края (как абзацный отступ). Если заголовок переносится
+% на следующую строку — продолжение идёт с края (положение 0).
 \titleformat{\section}
     {\fontsize{16pt}{19pt}\bfseries\raggedright\selectfont}
-    {\thesection.}{0.5em}{\MakeUppercase}
+    {\hspace*{1.25cm}\thesection.}{0.5em}{\MakeUppercase}
+% Введение, Заключение — без метки, поэтому без abспэйса.
 \titleformat{name=\section,numberless}
     {\fontsize{14pt}{17pt}\bfseries\raggedright\selectfont}
     {}{0pt}{}
 \titleformat{\subsection}
     {\fontsize{14pt}{17pt}\bfseries\raggedright\selectfont}
-    {\thesubsection.}{0.5em}{}
+    {\hspace*{1.25cm}\thesubsection.}{0.5em}{}
 % \titlespacing*{<команда>}{<отступ слева>}{<до>}{<после>}
 % Заголовки глав (\section и \section*) — с самого левого края (0pt).
 % Подразделы (\subsection) — с абзацным отступом 1.25 см.

@@ -4,43 +4,56 @@ skinparam shadowing false
 skinparam defaultFontName "Times New Roman"
 skinparam defaultFontSize 13
 skinparam ActorStyle awesome
-' Компактнее для портретной А4: top to bottom + актёры по краям,
-' use cases группируются по ролям внутри пакета.
-top to bottom direction
+skinparam dpi 150
+skinparam usecase {
+    BackgroundColor #FAFAFA
+    BorderColor #555
+}
+left to right direction
 
-title Диаграмма прецедентов сервиса EduQuiz
+' Портретная компоновка под A4: актёры столбцом слева, use cases —
+' тремя вертикальными группами в EduQuiz справа. Скрытые связи между
+' актёрами и между пакетами заставляют PlantUML укладывать их сверху вниз.
 
-actor "Преподаватель" as Teacher
-actor "Студент" as Student
-actor "Администратор" as Admin
+actor "Преподаватель"  as Teacher
+actor "Студент"        as Student
+actor "Администратор"  as Admin
+
+Teacher -[hidden]down- Student
+Student -[hidden]down- Admin
 
 rectangle "EduQuiz" {
     package "Преподаватель" as PT {
-        usecase "Регистрация / вход" as UC_Login
-        usecase "Создать курс" as UC_CreateCourse
-        usecase "Импорт банка\nвопросов из edu.gubkin" as UC_ImportBank
-        usecase "Создать комнату\nи запустить сессию" as UC_RunSession
-        usecase "Управлять ходом\nинтерактива" as UC_ControlSession
-        usecase "Просмотр\nаналитики" as UC_Analytics
+        usecase "Создать курс"                            as UC_CreateCourse
+        usecase "Импорт банка вопросов\nиз edu.gubkin"    as UC_ImportBank
+        usecase "Создать комнату\nи запустить сессию"     as UC_RunSession
+        usecase "Управлять ходом\nинтерактива"            as UC_ControlSession
+        usecase "Просмотр аналитики"                      as UC_Analytics
     }
+
     package "Студент" as PS {
-        usecase "Подключиться\nпо коду" as UC_Join
-        usecase "Ответить\nна вопрос" as UC_Answer
-        usecase "Повторение\nпо SM-2" as UC_Review
-        usecase "Свой прогресс\nи бейджи" as UC_Progress
+        usecase "Подключиться по коду"        as UC_Join
+        usecase "Ответить на вопрос"          as UC_Answer
+        usecase "Повторение по SM-2"          as UC_Review
+        usecase "Свой прогресс\nи бейджи"     as UC_Progress
     }
+
     package "Администратор" as PA {
-        usecase "Управление\nпользователями" as UC_ManageUsers
-        usecase "Управление\nкурсами" as UC_ManageCourses
+        usecase "Регистрация / вход"          as UC_Login
+        usecase "Управление пользователями"   as UC_ManageUsers
+        usecase "Управление курсами"          as UC_ManageCourses
     }
+
+    PT -[hidden]down- PS
+    PS -[hidden]down- PA
 }
 
-Teacher -- UC_Login
 Teacher -- UC_CreateCourse
 Teacher -- UC_ImportBank
 Teacher -- UC_RunSession
 Teacher -- UC_ControlSession
 Teacher -- UC_Analytics
+Teacher -- UC_Login
 
 Student -- UC_Login
 Student -- UC_Join
