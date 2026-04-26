@@ -117,9 +117,12 @@
 \tolerance=9999
 \emergencystretch=4em
 
-% Сквозная нумерация рисунков, таблиц, формул, листингов (по требованиям кафедры).
-% При желании заменить на двухуровневую: \counterwithin{figure}{section} и т.д.
-% Сейчас оставляем сквозную --- она проще для отслеживания ссылок.
+% Двухуровневая нумерация рисунков, таблиц, формул и листингов
+% по главам: «Рисунок 1.1», «Таблица 2.3», формула (3.5) и т. д.
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+\counterwithin{equation}{section}
+\AtBeginDocument{\counterwithin{lstlisting}{section}}
 
 % Запрет на висячие строки (orphans) и заголовков, оторванных от текста (widows).
 \widowpenalty=10000
@@ -139,8 +142,20 @@
 %     быть достаточной, иначе номер налезет на текст.
 %   leader-sep — расстояние между точками дотлидера; меньшее значение
 %     → точки гуще.
-\dottedcontents{section}[0pt]{\bfseries}{9em}{0.4pc}
-\dottedcontents{subsection}[1.25cm]{}{3.5em}{0.4pc}
+% Используем \titlecontents (titletoc): два формата на section ---
+% для нумерованных глав (\section{...}) и безномерных (\section*{...}).
+% Это решает проблему с label-width 9em, который смещал безномерные
+% строки (ВВЕДЕНИЕ, ЗАКЛЮЧЕНИЕ, ПРИЛОЖЕНИЕ N) за левый край страницы.
+\titlecontents{section}[0pt]
+    {}                                                % above-code
+    {\bfseries\thecontentslabel.\quad}                % numbered: «ГЛАВА N. »
+    {\bfseries}                                       % numberless: имя сразу
+    {\bfseries\titlerule*[6pt]{.}\contentspage}       % filler + page
+\titlecontents{subsection}[1.25cm]
+    {}
+    {\thecontentslabel.\quad}
+    {}
+    {\titlerule*[6pt]{.}\contentspage}
 
 \renewcommand{\thesection}{ГЛАВА \arabic{section}}
 \renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
