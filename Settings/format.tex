@@ -190,16 +190,20 @@
 %     от тела абзацным разрывом и точка попадает на отдельную строку.
 \newcommand{\eqSectionFormat}[1]{\MakeUppercase{#1}.}
 \newcommand{\eqSubsectionFormat}[1]{#1.}
+% \setstretch{1} внутри заголовка отключает глобальный \linespread{1.5}
+% — иначе 16-пт заголовок занимает 16*1.5=24pt baseline и под ним
+% образуется ощутимый «пробел» перед следующим абзацем. С локальным
+% stretch=1 заголовок плотный, а body-текст продолжает идти с 1.5.
 \titleformat{\section}[block]
-    {\fontsize{16pt}{19pt}\bfseries\selectfont}
+    {\setstretch{1}\fontsize{16pt}{19pt}\bfseries\selectfont}
     {\hspace*{1.25cm}\thesection.}{0.5em}{\eqSectionFormat}
 % Введение, Заключение — без метки и без точки на конце (по образцу
 % кафедры АСУ заголовки уровня section без номера остаются «голыми»).
 \titleformat{name=\section,numberless}[block]
-    {\fontsize{14pt}{17pt}\bfseries\selectfont}
+    {\setstretch{1}\fontsize{14pt}{17pt}\bfseries\selectfont}
     {\hspace*{1.25cm}}{0pt}{\MakeUppercase}
 \titleformat{\subsection}[block]
-    {\fontsize{14pt}{17pt}\bfseries\selectfont}
+    {\setstretch{1}\fontsize{14pt}{17pt}\bfseries\selectfont}
     {\hspace*{1.25cm}\thesubsection.}{0.5em}{\eqSubsectionFormat}
 % \titlespacing*{<команда>}{<отступ слева>}{<до>}{<после>}
 % Все заголовки — левый край 0pt; абзацный отступ 1.25 см для метки
