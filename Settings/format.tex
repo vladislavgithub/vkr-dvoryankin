@@ -130,10 +130,17 @@
 % (явно фиксируем, чтобы Word-style вставки не привнесли его при копировании).
 \setlength{\parskip}{0pt}
 
-% \dottedcontents{<section>}[<left>]{<above-code>}
-% {<label width>}{<leader width>}
-\dottedcontents{section}[4em]{\bfseries}{4em}{1pc}
-\dottedcontents{subsection}[4em]{}{2.5em}{1pc}
+% Оглавление по образцу кафедры:
+%   ВВЕДЕНИЕ, ГЛАВА N. НАЗВАНИЕ, ЗАКЛЮЧЕНИЕ, СПИСОК ЛИТЕРАТУРЫ,
+%   ПРИЛОЖЕНИЕ N — все заглавными, без отступа.
+%   Подразделы (1.1, 1.2, ...) — обычным регистром, с отступом.
+% \dottedcontents{<section>}[<left-indent>]{<format>}{<label-width>}{<leader-sep>}
+%   label-width — ширина области под метку («ГЛАВА N.»); должна
+%     быть достаточной, иначе номер налезет на текст.
+%   leader-sep — расстояние между точками дотлидера; меньшее значение
+%     → точки гуще.
+\dottedcontents{section}[0pt]{\MakeUppercase}{9em}{0.4pc}
+\dottedcontents{subsection}[1.25cm]{}{3.5em}{0.4pc}
 
 \renewcommand{\thesection}{ГЛАВА \arabic{section}}
 \renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
