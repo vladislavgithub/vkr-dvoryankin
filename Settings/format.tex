@@ -190,30 +190,34 @@
 %     от тела абзацным разрывом и точка попадает на отдельную строку.
 \newcommand{\eqSectionFormat}[1]{\MakeUppercase{#1}.}
 \newcommand{\eqSubsectionFormat}[1]{#1.}
-% \setstretch{1} внутри заголовка отключает глобальный \linespread{1.5}
-% — иначе 16-пт заголовок занимает 16*1.5=24pt baseline и под ним
-% образуется ощутимый «пробел» перед следующим абзацем. С локальным
-% stretch=1 заголовок плотный, а body-текст продолжает идти с 1.5.
+% Межстрочный 1.5 наследуется от документа (\linespread{1.5}) — внутри
+% многострочного заголовка строки разнесены так же, как в основном тексте.
+% Чтобы при этом не возвращался лишний пробел между заголовком и следующим
+% абзацем, в \titlespacing* ниже задано отрицательное after-значение
+% -0.5\baselineskip — оно компенсирует «висящую» нижнюю часть высокого
+% заголовка, оставляя стык с body-текстом плотным.
 \titleformat{\section}[block]
-    {\setstretch{1}\fontsize{16pt}{19pt}\bfseries\selectfont}
+    {\fontsize{16pt}{19pt}\bfseries\selectfont}
     {\hspace*{1.25cm}\thesection.}{0.5em}{\eqSectionFormat}
 % Введение, Заключение — без метки и без точки на конце (по образцу
 % кафедры АСУ заголовки уровня section без номера остаются «голыми»).
 \titleformat{name=\section,numberless}[block]
-    {\setstretch{1}\fontsize{14pt}{17pt}\bfseries\selectfont}
+    {\fontsize{14pt}{17pt}\bfseries\selectfont}
     {\hspace*{1.25cm}}{0pt}{\MakeUppercase}
 \titleformat{\subsection}[block]
-    {\setstretch{1}\fontsize{14pt}{17pt}\bfseries\selectfont}
+    {\fontsize{14pt}{17pt}\bfseries\selectfont}
     {\hspace*{1.25cm}\thesubsection.}{0.5em}{\eqSubsectionFormat}
 % \titlespacing*{<команда>}{<отступ слева>}{<до>}{<после>}
 % Все заголовки — левый край 0pt; абзацный отступ 1.25 см для метки
 % («ГЛАВА N.», «N.M.») задаётся через \hspace*{1.25cm} в \titleformat.
-% Это даёт «отступ первой строки 1.25 / отступ слева 0»: метка стоит
-% с абзацным отступом, а перенос продолжающихся строк уходит к левому
-% краю — единый стиль для глав и подразделов.
-\titlespacing*{\section}      {0pt}{0pt}{0pt}
-\titlespacing*{name=\section,numberless}{0pt}{0pt}{0pt}
-\titlespacing*{\subsection}   {0pt}{0pt}{0pt}
+% Отрицательное after-значение -0.5\baselineskip убирает визуальный
+% «пробел», который без него образовывался под высоким (16-пт + 1.5)
+% заголовком — без него межстрочный 1.5 в заголовке давал ~12pt
+% свободного пространства снизу, и переход к body выглядел как
+% дополнительный интервал.
+\titlespacing*{\section}      {0pt}{0pt}{-0.5\baselineskip}
+\titlespacing*{name=\section,numberless}{0pt}{0pt}{-0.5\baselineskip}
+\titlespacing*{\subsection}   {0pt}{0pt}{-0.5\baselineskip}
 
 % настройка подсветки кода и окружения для листингов
 %\usemintedstyle{colorful} % делает подсветку для кода
