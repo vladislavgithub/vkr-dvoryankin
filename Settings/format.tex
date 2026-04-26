@@ -185,18 +185,22 @@
 %     а не под букву после метки (как было бы при hang).
 %   - выравнивание по ширине (без \raggedright) — длинные заголовки
 %     растягиваются по странице, как обычный абзац.
-%   - после тела заголовка ставится точка (after-code = .).
+%   - точка в конце добавлена через body-фильтр (#1 — тело заголовка),
+%     а не через after-code: после-код в [block]-режиме отделяется
+%     от тела абзацным разрывом и точка попадает на отдельную строку.
+\newcommand{\eqSectionFormat}[1]{\MakeUppercase{#1}.}
+\newcommand{\eqSubsectionFormat}[1]{#1.}
 \titleformat{\section}[block]
     {\fontsize{16pt}{19pt}\bfseries\selectfont}
-    {\hspace*{1.25cm}\thesection.}{0.5em}{\MakeUppercase}[.]
+    {\hspace*{1.25cm}\thesection.}{0.5em}{\eqSectionFormat}
 % Введение, Заключение — без метки и без точки на конце (по образцу
 % кафедры АСУ заголовки уровня section без номера остаются «голыми»).
 \titleformat{name=\section,numberless}[block]
     {\fontsize{14pt}{17pt}\bfseries\selectfont}
-    {\hspace*{1.25cm}}{0pt}{}
+    {\hspace*{1.25cm}}{0pt}{\MakeUppercase}
 \titleformat{\subsection}[block]
     {\fontsize{14pt}{17pt}\bfseries\selectfont}
-    {\hspace*{1.25cm}\thesubsection.}{0.5em}{}[.]
+    {\hspace*{1.25cm}\thesubsection.}{0.5em}{\eqSubsectionFormat}
 % \titlespacing*{<команда>}{<отступ слева>}{<до>}{<после>}
 % Все заголовки — левый край 0pt; абзацный отступ 1.25 см для метки
 % («ГЛАВА N.», «N.M.») задаётся через \hspace*{1.25cm} в \titleformat.
