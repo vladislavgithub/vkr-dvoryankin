@@ -9,8 +9,10 @@
 \usepackage[labelsep=endash]{caption}
 % Подписи рисунков центрируются (default), подписи таблиц
 % выравниваются по правому краю и стоят над таблицей.
-\captionsetup[table]{justification=raggedleft, singlelinecheck=off, position=above}
-\captionsetup[figure]{justification=centering, position=below}
+% labelsep=endash повторяем явно — иначе captionsetup сбрасывает
+% его на дефолт (двоеточие/точка).
+\captionsetup[table] {labelsep=endash, justification=raggedleft, singlelinecheck=off, position=above}
+\captionsetup[figure]{labelsep=endash, justification=centering,  singlelinecheck=on,  position=below}
 
 \usepackage{titletoc}
 
