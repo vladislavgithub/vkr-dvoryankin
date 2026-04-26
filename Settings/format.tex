@@ -90,8 +90,13 @@
 % \setmonofont уже задан выше (см. блок шрифтов с Path=fonts/).
 % \setmonofont{Source Code Pro}
 
-% Перенос текста при переполнении
-\emergencystretch=25pt
+% Запрет переносов слов через дефис (по образцу кафедры АСУ).
+% Текст «растягивается» межсловными пробелами вместо переноса.
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\sloppy
+\tolerance=9999
+\emergencystretch=4em
 
 % Сквозная нумерация рисунков, таблиц, формул, листингов (по требованиям кафедры).
 % При желании заменить на двухуровневую: \counterwithin{figure}{section} и т.д.
