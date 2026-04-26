@@ -37,8 +37,22 @@
 \linespread{1.5} % междустрочный интервал
 
 
-% Отступ для элементов списка
-\setlist{leftmargin=1.75cm}
+% Отступы списков по требованию кафедры:
+% метка («1», «2» или «-») стоит с абзацного отступа 1.25 см от левого края,
+% продолжение строк хангиндентом выровнено по началу текста пункта.
+\setlist[enumerate,1]{
+    label=\arabic*,
+    labelindent=1.25cm,
+    leftmargin=*,
+    labelsep=1em,
+    align=left,
+}
+\setlist[itemize,1]{
+    label=\textendash,
+    labelindent=1.25cm,
+    leftmargin=*,
+    labelsep=0.5em,
+}
 \setlist[itemize,2]{label=$\circ$, leftmargin=1cm}
 
 
