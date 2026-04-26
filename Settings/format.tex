@@ -133,6 +133,24 @@
 \renewcommand{\thesection}{Глава \arabic{section}}
 \renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
 
+% Размеры заголовков по требованию кафедры:
+%   - Главы (\section): 16 pt, жирным, по центру
+%   - Подразделы (\subsection): 14 pt, жирным
+%   - Безномерные (\section* — Введение, Заключение): 14 pt, жирным, по центру
+% Базовый размер документа — 14 pt, поэтому остальной текст идёт 14 pt.
+\usepackage{titlesec}
+\titleformat{\section}
+    {\fontsize{16pt}{19pt}\bfseries\selectfont\centering}
+    {\thesection.}{0.5em}{}
+\titleformat{name=\section,numberless}
+    {\fontsize{14pt}{17pt}\bfseries\selectfont\centering}
+    {}{0pt}{}
+\titleformat{\subsection}
+    {\fontsize{14pt}{17pt}\bfseries\selectfont}
+    {\thesubsection.}{0.5em}{}
+\titlespacing*{\section}      {0pt}{18pt}{12pt}
+\titlespacing*{\subsection}   {0pt}{12pt}{6pt}
+
 % настройка подсветки кода и окружения для листингов
 %\usemintedstyle{colorful} % делает подсветку для кода
 %\newenvironment{code}{\captionsetup{type=listing}}{}
