@@ -179,19 +179,24 @@
 % 1.25 см. Интервалы перед/после заголовков — минимальные
 % (как обычный абзац), без «Word-style» дополнительных промежутков.
 \usepackage{titlesec}
-% Метка заголовка («ГЛАВА N.», «N.M.») сдвинута на 1.25 см от
-% левого края (как абзацный отступ). Если заголовок переносится
-% на следующую строку — продолжение идёт с края (положение 0).
-\titleformat{\section}
-    {\fontsize{16pt}{19pt}\bfseries\raggedright\selectfont}
-    {\hspace*{1.25cm}\thesection.}{0.5em}{\MakeUppercase}
-% Введение, Заключение — без метки, поэтому без abспэйса.
-\titleformat{name=\section,numberless}
-    {\fontsize{14pt}{17pt}\bfseries\raggedright\selectfont}
-    {}{0pt}{}
-\titleformat{\subsection}
-    {\fontsize{14pt}{17pt}\bfseries\raggedright\selectfont}
-    {\hspace*{1.25cm}\thesubsection.}{0.5em}{}
+% Заголовки в стиле Word-шаблона кафедры:
+%   - shape = block: первая строка с абзацным отступом 1.25 см,
+%     перенос продолжающихся строк к левому краю (положение 0),
+%     а не под букву после метки (как было бы при hang).
+%   - выравнивание по ширине (без \raggedright) — длинные заголовки
+%     растягиваются по странице, как обычный абзац.
+%   - после тела заголовка ставится точка (after-code = .).
+\titleformat{\section}[block]
+    {\fontsize{16pt}{19pt}\bfseries\selectfont}
+    {\hspace*{1.25cm}\thesection.}{0.5em}{\MakeUppercase}[.]
+% Введение, Заключение — без метки и без точки на конце (по образцу
+% кафедры АСУ заголовки уровня section без номера остаются «голыми»).
+\titleformat{name=\section,numberless}[block]
+    {\fontsize{14pt}{17pt}\bfseries\selectfont}
+    {\hspace*{1.25cm}}{0pt}{}
+\titleformat{\subsection}[block]
+    {\fontsize{14pt}{17pt}\bfseries\selectfont}
+    {\hspace*{1.25cm}\thesubsection.}{0.5em}{}[.]
 % \titlespacing*{<команда>}{<отступ слева>}{<до>}{<после>}
 % Все заголовки — левый край 0pt; абзацный отступ 1.25 см для метки
 % («ГЛАВА N.», «N.M.») задаётся через \hspace*{1.25cm} в \titleformat.
