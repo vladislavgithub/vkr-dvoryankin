@@ -7,10 +7,11 @@
 % Подписи рисунков и таблиц по требованию кафедры АСУ:
 % «Рисунок 1 — Описание», разделитель — длинное тире.
 \usepackage[labelsep=endash]{caption}
-% Полная замена локализованных имён: polyglossia ставит
-% \figurename = «Рис.» (с точкой), нам нужно «Рисунок».
-% Откладываем до \begin{document} — после загрузки polyglossia.
-\AtBeginDocument{%
+% Polyglossia ставит \figurename = «Рис.» (с точкой), нам нужно
+% «Рисунок». \AtBeginDocument не работает — polyglossia сбрасывает
+% после нас. Используем \addto\captionsrussian — стандартный
+% механизм babel/polyglossia, выполняется при выборе языка.
+\addto\captionsrussian{%
     \renewcommand{\figurename}{Рисунок}%
     \renewcommand{\tablename}{Таблица}%
 }
