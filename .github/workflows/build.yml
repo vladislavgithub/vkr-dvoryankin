@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write   # нужно для публикации Release
+  contents: write
 
 jobs:
   build:
@@ -30,37 +30,41 @@ jobs:
             biber \
             latexmk
 
-      - name: Compile LaTeX (xelatex + biber)
+      - name: Compile LaTeX
         run: |
           latexmk -pdf -pdflatex='xelatex -interaction=nonstopmode -shell-escape' -file-line-error main.tex || true
           ls -la main.pdf
 
-      - name: Rename PDF
-        run: |
-          DATE=$(date +%Y-%m-%d)
-          SHA=$(echo ${{ github.sha }} | cut -c1-7)
-          mkdir -p out
-          cp main.pdf out/vkr-dvoryankin.pdf
-          cp main.pdf out/vkr-dvoryankin-${DATE}-${SHA}.pdf
-
-      - name: Upload PDF artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: vkr-dvoryankin-pdf
-          path: out/*.pdf
-          retention-days: 90
-
-      - name: Update rolling release (main only)
+      - name: Update latest release via API
         if: github.ref == 'refs/heads/main'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest
-          name: "Latest build"
-          body: |
-            Свежий PDF магистерской работы.
-            Коммит: ${{ github.sha }}
-            Сообщение: ${{ github.event.head_commit.message }}
-          files: out/vkr-dvoryankin.pdf
-          make_latest: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -e
+          # удалить старый asset если есть
+          ASSET_URL=$(curl -fsSL -H "Authorization: token $GH_TOKEN" \
+            "https://api.github.com/repos/$REPO/releases/tags/latest" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); a=[x for x in d.get('assets',[]) if x['name']=='vkr-dvoryankin.pdf']; print(a[0]['url'] if a else '')")
+          if [ -n "$ASSET_URL" ]; then
+            curl -fsSL -X DELETE -H "Authorization: token $GH_TOKEN" "$ASSET_URL"
+          fi
+          # получить upload_url
+          UPLOAD_URL=$(curl -fsSL -H "Authorization: token $GH_TOKEN" \
+            "https://api.github.com/repos/$REPO/releases/tags/latest" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['upload_url'].split('{')[0])")
+          # обновить тело release
+          REL_ID=$(curl -fsSL -H "Authorization: token $GH_TOKEN" \
+            "https://api.github.com/repos/$REPO/releases/tags/latest" \
+            | python3 -c "import json,sys; print(json.load(sys.stdin)['id'])")
+          curl -fsSL -X PATCH -H "Authorization: token $GH_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"body\":\"Свежий PDF магистерской работы. Коммит: $SHA\"}" \
+            "https://api.github.com/repos/$REPO/releases/$REL_ID" > /dev/null
+          # загрузить новый PDF
+          curl -fsSL -X POST -H "Authorization: token $GH_TOKEN" \
+            -H "Content-Type: application/pdf" \
+            --data-binary @main.pdf \
+            "${UPLOAD_URL}?name=vkr-dvoryankin.pdf" > /dev/null
+          echo "Uploaded vkr-dvoryankin.pdf to release 'latest'"
