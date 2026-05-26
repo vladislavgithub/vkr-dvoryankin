@@ -253,6 +253,18 @@ Color alphaColor(double a, ColorScheme scheme) {
 \renewcommand{\thefigure}{Б.\arabic{figure}}
 \setcounter{figure}{0}
 
+% Локальное переопределение \image в приложении Б: спецификатор [H]
+% из пакета float фиксирует рисунок строго в указанном месте
+% и не даёт ему «плавать» в следующий подраздел.
+\renewcommand{\image}[4]{%
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=#4\textwidth]{#1}
+    \caption{#2}
+    \label{#3}
+\end{figure}
+}
+
 Скриншоты основных экранов клиентского приложения, иллюстрирующие
 функциональность, описанную в главе~2 диссертации.
 
@@ -262,21 +274,21 @@ Color alphaColor(double a, ColorScheme scheme) {
 \image{ui-auth.png}{Экран входа и регистрации в веб-версии клиента}{fig:ui-auth}{0.7}
 
 \needspace{8\baselineskip}
-\subsection*{Б.2\quad Кабинет преподавателя}
+\subsection*{Б.2\quad Рабочее место преподавателя}
 
 Список курсов, экран банка вопросов, психометрическая карточка
 ($\alpha$ Кронбаха и статистики пунктов).
 
-\image{ui-teacher-courses.png}{Кабинет преподавателя: список курсов}{fig:ui-teacher-courses}{0.7}
+\image{ui-teacher-courses.png}{Рабочее место преподавателя: список курсов}{fig:ui-teacher-courses}{0.7}
 \image{ui-bank-editor.png}{Редактор банка вопросов}{fig:ui-bank-editor}{0.7}
 \image{ui-bank-analytics.png}{Психометрическая карточка банка вопросов}{fig:ui-bank-analytics}{0.7}
 
 \needspace{8\baselineskip}
-\subsection*{Б.3\quad Кабинет студента}
+\subsection*{Б.3\quad Рабочее место обучающегося}
 
 Ввод кода сессии, экран ответа на вопрос, итоговый экран сессии.
 
-\image{ui-student-home.png}{Кабинет студента: ввод кода сессии}{fig:ui-student-home}{0.7}
+\image{ui-student-home.png}{Рабочее место обучающегося: ввод кода сессии}{fig:ui-student-home}{0.7}
 \image{ui-room-active.png}{Активный вопрос интерактивной сессии}{fig:ui-room-active}{0.7}
 \image{ui-room-finished.png}{Итоговый экран сессии}{fig:ui-room-finished}{0.7}
 
@@ -288,15 +300,15 @@ Color alphaColor(double a, ColorScheme scheme) {
 \needspace{8\baselineskip}
 \subsection*{Б.5\quad Профиль и игровая прогрессия}
 
-XP, уровень, серия дней, гистограмма XP за последние 14 дней,
-каталог бейджей.
+Очки опыта, уровень, серия активных дней, гистограмма очков
+опыта за последние 14 дней, каталог достижений.
 
-\image{ui-profile.png}{Профиль студента: XP, уровень, бейджи}{fig:ui-profile}{0.7}
+\image{ui-profile.png}{Профиль обучающегося: XP, уровень, фрагмент каталога достижений}{fig:ui-profile}{0.7}
 
 \needspace{8\baselineskip}
-\subsection*{Б.6\quad Лидерборд интерактивной сессии}
+\subsection*{Б.6\quad Таблица лидеров интерактивной сессии}
 
-\image{ui-leaderboard.png}{Лидерборд live-сессии}{fig:ui-leaderboard}{0.7}
+\image{ui-leaderboard.png}{Таблица лидеров интерактивной сессии}{fig:ui-leaderboard}{0.7}
 
 \newpage
 \phantomsection
