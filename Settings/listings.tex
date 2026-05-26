@@ -15,14 +15,19 @@
           keywordstyle=\color{blue},
           deletekeywords={local},
           breaklines=true,
-          commentstyle=\color{teal},   
+          commentstyle=\color{teal},
           breakatwhitespace=false,
           showspaces=false,
           showstringspaces=false,
           escapeinside={(*}{*)},
-          mathescape=true
+          mathescape=false,
+          keepspaces=true,
+          columns=fullflexible,
+          extendedchars=true
     }
-\usepackage{lstfiracode}
+% \usepackage{lstfiracode} отключён: подменял шрифт листинга на FiraCode,
+% в котором нет глифов кириллицы (русские комментарии слипались
+% без пробелов) и дефис превращался в Unicode-минус U+2212.
 
 % Подписи к листингам на русском языке.
 \renewcommand\lstlistingname{Листинг}

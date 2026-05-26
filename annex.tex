@@ -15,12 +15,13 @@
 \texttt{eduquiz-backend} (серверная часть на языке Go) и
 \texttt{eduquiz-flutter} (кроссплатформенный клиент на Flutter).
 
-\subsection*{А.1\quad Реализация алгоритма SM\textendash 2}
+\subsection*{А.1\quad Реализация алгоритма SM-2}
 
 Реализация чистая, не зависящая от инфраструктуры; используется
 как обработчиками REST-запросов, так и в юнит-тестах. Файл
 \texttt{internal/services/sm2.go} серверной части.
 
+\filbreak
 \begin{lstlisting}[caption={Алгоритм интервального повторения SM-2},label=lst:sm2-go]
 // Sm2State хранит параметры повторения карточки для пары (студент, вопрос).
 type Sm2State struct {
@@ -64,10 +65,11 @@ func Sm2Update(s Sm2State, q int, now time.Time) Sm2State {
 
 \subsection*{А.2\quad Автоматическое формирование оценки качества ответа}
 
-Оценка $q$ для алгоритма SM\textendash 2 формируется автоматически
+Оценка $q$ для алгоритма SM-2 формируется автоматически
 по корректности и времени ответа без явного запроса у обучающегося.
 Фрагмент из обработчика ответа в файле \texttt{internal/handlers/rooms.go}.
 
+\filbreak
 \begin{lstlisting}[caption={Формирование q-score из (корректность $\times$ время)},label=lst:qscore-go]
 // sm2QScore выводит q in [0,5] из факта правильности и скорости ответа.
 //   correct + <=½T -> 5;  correct + <=T -> 4;  correct + >T -> 3;
@@ -97,6 +99,7 @@ func sm2QScore(correct bool, elapsedMs, timeLimitMs int) int {
 Реализация формулы~\eqref{eq:xp} из раздела~2.4. Файл
 \texttt{internal/services/xp.go} серверной части.
 
+\filbreak
 \begin{lstlisting}[caption={Расчёт XP за один ответ},label=lst:xp-go]
 type XPParams struct {
     Alpha     float64 // штраф за медлительность; 0.5 по умолчанию
@@ -154,6 +157,7 @@ func LevelFromXP(xp int) int {
 и точечно-бисериальной корреляции $r_{pb,i}$. Файл
 \texttt{internal/services/analytics.go}.
 
+\filbreak
 \begin{lstlisting}[caption={Расчёт $\alpha$ Кронбаха и статистик пунктов},label=lst:analytics-go]
 // AnalyzeBank вычисляет alpha + статистики каждого пункта по матрице
 // ответов responses[participant][item] in {0,1}.
@@ -222,6 +226,7 @@ func AnalyzeBank(responses [][]int) BankAnalytics {
 и флажки качества пунктов используются преподавателем для
 итеративного улучшения банка вопросов.
 
+\filbreak
 \begin{lstlisting}[caption={Интерпретация $\alpha$ Кронбаха в клиенте},label=lst:alpha-dart]
 String alphaInterpretation(double a) {
   if (a >= 0.9) return 'Отлично — но проверьте дублирование пунктов';
@@ -272,7 +277,7 @@ Color alphaColor(double a, ColorScheme scheme) {
 \image{ui-room-active.png}{Активный вопрос интерактивной сессии}{fig:ui-room-active}{0.7}
 \image{ui-room-finished.png}{Итоговый экран сессии}{fig:ui-room-finished}{0.7}
 
-\subsection*{Б.4\quad Экран интервального повторения SM\textendash 2}
+\subsection*{Б.4\quad Экран интервального повторения SM-2}
 
 \image{ui-sm2.png}{Экран индивидуального повторения по SM-2}{fig:ui-sm2}{0.7}
 
@@ -397,9 +402,9 @@ XP, уровень, серия дней, гистограмма XP за посл
     \item[$k_\text{г}$] --- коэффициент готовности.
     \item[$\alpha$] --- коэффициент $\alpha$ Кронбаха (психометрика); в методике педагогического эксперимента~--- уровень значимости.
     \item[$\beta$] --- коэффициент штрафа за продолжительность ответа в формуле начисления очков опыта.
-    \item[$EF$] --- easiness factor, коэффициент лёгкости в алгоритме SM\textendash 2.
-    \item[$I$] --- интервал повторения в днях (SM\textendash 2).
-    \item[$q$] --- оценка качества ответа в алгоритме SM\textendash 2, $q\in[0,5]$.
+    \item[$EF$] --- easiness factor, коэффициент лёгкости в алгоритме SM-2.
+    \item[$I$] --- интервал повторения в днях (SM-2).
+    \item[$q$] --- оценка качества ответа в алгоритме SM-2, $q\in[0,5]$.
     \item[$d$] --- оценка сложности вопроса, $d\in[1,5]$.
     \item[$XP$] --- очки опыта, накапливаемые обучающимся.
     \item[$L$] --- уровень обучающегося в системе игровой прогрессии.

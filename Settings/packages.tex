@@ -6,14 +6,18 @@
 
 % Подписи рисунков и таблиц по требованию кафедры АСУ:
 % «Рисунок 1 — Описание», разделитель — длинное тире.
-\usepackage[labelsep=endash]{caption}
+\usepackage{caption}
+% В пакете caption нет встроенного labelsep=emdash; определяем свой
+% разделитель как длинное тире (—), как требуют ГОСТ 7.32-2017
+% и методичка кафедры АСУ: «Рисунок N — Описание».
+\DeclareCaptionLabelSeparator{emdash}{~--- }
 % Polyglossia сбрасывает \figurename на «Рис.» при активации русского
 % языка, поэтому \renewcommand{\figurename}{...} в преамбуле и даже
 % \AtBeginDocument срабатывают ненадёжно. Самый прямой способ —
 % задать имя метки в caption-пакете через name=..., минуя \figurename.
-\captionsetup[table]    {name=Таблица, labelsep=endash, justification=raggedleft, singlelinecheck=off, position=above}
-\captionsetup[figure]   {name=Рисунок, labelsep=endash, justification=centering,  singlelinecheck=on,  position=below}
-\captionsetup[lstlisting]{labelsep=endash, justification=centering, singlelinecheck=on,  position=below}
+\captionsetup[table]    {name=Таблица, labelsep=emdash, justification=raggedleft, singlelinecheck=off, position=above}
+\captionsetup[figure]   {name=Рисунок, labelsep=emdash, justification=centering,  singlelinecheck=on,  position=below}
+\captionsetup[lstlisting]{labelsep=emdash, justification=centering, singlelinecheck=on,  position=below}
 % Дублируем через \AtBeginDocument для пакетов, читающих \figurename
 % напрямую (например, hyperref для подписей якорей).
 \AtBeginDocument{%
