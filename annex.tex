@@ -1,8 +1,12 @@
+\newpage
 \phantomsection
 \section*{ПРИЛОЖЕНИЕ А. ФРАГМЕНТЫ ИСХОДНОГО КОДА} \label{application_A}
 \addcontentsline{toc}{section}{ПРИЛОЖЕНИЕ А. Фрагменты исходного кода}
 \pagestyle{empty}
 
+% Нумерация листингов внутри приложения А: А.1, А.2, ... (ГОСТ 7.32-2017).
+\renewcommand{\thelstlisting}{А.\arabic{lstlisting}}
+\setcounter{lstlisting}{0}
 \setcounter{figure}{0}
 
 В настоящем приложении приведены ключевые фрагменты исходного
@@ -240,12 +244,16 @@ Color alphaColor(double a, ColorScheme scheme) {
 \section*{ПРИЛОЖЕНИЕ Б. СКРИНШОТЫ ИНТЕРФЕЙСА} \label{application_B}
 \addcontentsline{toc}{section}{ПРИЛОЖЕНИЕ Б. Скриншоты интерфейса}
 
+% Нумерация рисунков внутри приложения Б: Б.1, Б.2, ... (ГОСТ 7.32-2017).
+\renewcommand{\thefigure}{Б.\arabic{figure}}
+\setcounter{figure}{0}
+
 Скриншоты основных экранов клиентского приложения, иллюстрирующие
 функциональность, описанную в главе~2 диссертации.
 
 \subsection*{Б.1\quad Экран входа и регистрации}
 
-\image{ui-auth.png}{Экран входа и регистрации (Web)}{fig:ui-auth}{0.7}
+\image{ui-auth.png}{Экран входа и регистрации в веб-версии клиента}{fig:ui-auth}{0.7}
 
 \subsection*{Б.2\quad Кабинет преподавателя}
 
