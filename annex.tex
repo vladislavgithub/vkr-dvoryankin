@@ -253,16 +253,19 @@ Color alphaColor(double a, ColorScheme scheme) {
 \renewcommand{\thefigure}{Б.\arabic{figure}}
 \setcounter{figure}{0}
 
-% Локальное переопределение \image в приложении Б: спецификатор [H]
-% из пакета float фиксирует рисунок строго в указанном месте
-% и не даёт ему «плавать» в следующий подраздел.
+% Локальное переопределение \image в приложении Б:
+% [!htb] + \FloatBarrier после — каждый рисунок завершается
+% строгим барьером, чтобы следующий не размещался рядом
+% (без \FloatBarrier две figure могли встать side-by-side
+% на одной странице, см. артефакт Б.5+Б.6 в прошлой сборке).
 \renewcommand{\image}[4]{%
-\begin{figure}[H]
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=#4\textwidth]{#1}
     \caption{#2}
     \label{#3}
 \end{figure}
+\FloatBarrier
 }
 
 Скриншоты основных экранов клиентского приложения, иллюстрирующие
