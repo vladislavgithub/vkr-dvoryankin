@@ -63,7 +63,12 @@
 \DefineBibliographyStrings{russian}{%
     urlseen = {дата обращения},
 }
-\AtBeginDocument{\def\bibrangedash{\textendash}}
+% Короткое тире en dash в диапазонах страниц '23–31'.
+% biblatex-gost подменяет \bibrangedash на em dash для русского
+% режима; перекрываем через \renewcommand и \AtBeginBibliography
+% (более позднее срабатывание, чем \AtBeginDocument).
+\renewcommand*{\bibrangedash}{\textendash}
+\AtBeginBibliography{\renewcommand*{\bibrangedash}{\textendash}}
 
 \usepackage{fancyhdr} % заголовок
 
