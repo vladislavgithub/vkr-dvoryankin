@@ -23,7 +23,17 @@
           mathescape=false,
           keepspaces=true,
           columns=fullflexible,
-          extendedchars=true
+          extendedchars=true,
+          tabsize=4,
+          % literate: принудительно рендерим ASCII-операторы из ttfamily
+          % через \char (одиночное прохождение, без рекурсии).
+          % Без этого * вылетал на baseline как ⋆ в шрифте Times.
+          literate={*}{{\char`\*}}1
+                   {<}{{\char`\<}}1
+                   {>}{{\char`\>}}1
+                   {=}{{\char`\=}}1
+                   {-}{{\char`\-}}1
+                   {+}{{\char`\+}}1
     }
 % \usepackage{lstfiracode} отключён: подменял шрифт листинга на FiraCode,
 % в котором нет глифов кириллицы (русские комментарии слипались

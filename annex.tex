@@ -15,13 +15,13 @@
 \texttt{eduquiz-backend} (серверная часть на языке Go) и
 \texttt{eduquiz-flutter} (кроссплатформенный клиент на Flutter).
 
+\filbreak
 \subsection*{А.1\quad Реализация алгоритма SM-2}
 
 Реализация чистая, не зависящая от инфраструктуры; используется
 как обработчиками REST-запросов, так и в юнит-тестах. Файл
 \texttt{internal/services/sm2.go} серверной части.
 
-\filbreak
 \begin{lstlisting}[caption={Алгоритм интервального повторения SM-2},label=lst:sm2-go]
 // Sm2State хранит параметры повторения карточки для пары (студент, вопрос).
 type Sm2State struct {
@@ -63,13 +63,13 @@ func Sm2Update(s Sm2State, q int, now time.Time) Sm2State {
 }
 \end{lstlisting}
 
+\filbreak
 \subsection*{А.2\quad Автоматическое формирование оценки качества ответа}
 
 Оценка $q$ для алгоритма SM-2 формируется автоматически
 по корректности и времени ответа без явного запроса у обучающегося.
 Фрагмент из обработчика ответа в файле \texttt{internal/handlers/rooms.go}.
 
-\filbreak
 \begin{lstlisting}[caption={Формирование q-score из (корректность $\times$ время)},label=lst:qscore-go]
 // sm2QScore выводит q in [0,5] из факта правильности и скорости ответа.
 //   correct + <=½T -> 5;  correct + <=T -> 4;  correct + >T -> 3;
@@ -94,12 +94,12 @@ func sm2QScore(correct bool, elapsedMs, timeLimitMs int) int {
 }
 \end{lstlisting}
 
+\filbreak
 \subsection*{А.3\quad Расчёт очков опыта (XP)}
 
 Реализация формулы~\eqref{eq:xp} из раздела~2.4. Файл
 \texttt{internal/services/xp.go} серверной части.
 
-\filbreak
 \begin{lstlisting}[caption={Расчёт XP за один ответ},label=lst:xp-go]
 type XPParams struct {
     Alpha     float64 // штраф за медлительность; 0.5 по умолчанию
@@ -151,13 +151,13 @@ func LevelFromXP(xp int) int {
 }
 \end{lstlisting}
 
+\filbreak
 \subsection*{А.4\quad Расчёт коэффициента $\alpha$ Кронбаха и статистик пунктов}
 
 Реализация формулы~\eqref{eq:cronbach}, индекса трудности $p_i$
 и точечно-бисериальной корреляции $r_{pb,i}$. Файл
 \texttt{internal/services/analytics.go}.
 
-\filbreak
 \begin{lstlisting}[caption={Расчёт $\alpha$ Кронбаха и статистик пунктов},label=lst:analytics-go]
 // AnalyzeBank вычисляет alpha + статистики каждого пункта по матрице
 // ответов responses[participant][item] in {0,1}.
@@ -219,6 +219,7 @@ func AnalyzeBank(responses [][]int) BankAnalytics {
 }
 \end{lstlisting}
 
+\filbreak
 \subsection*{А.5\quad Цветовая интерпретация значения $\alpha$ на клиенте}
 
 Фрагмент из файла \texttt{lib/features/teacher/bank\_analytics\_screen.dart}
@@ -226,7 +227,6 @@ func AnalyzeBank(responses [][]int) BankAnalytics {
 и флажки качества пунктов используются преподавателем для
 итеративного улучшения банка вопросов.
 
-\filbreak
 \begin{lstlisting}[caption={Интерпретация $\alpha$ Кронбаха в клиенте},label=lst:alpha-dart]
 String alphaInterpretation(double a) {
   if (a >= 0.9) return 'Отлично — но проверьте дублирование пунктов';
@@ -256,10 +256,12 @@ Color alphaColor(double a, ColorScheme scheme) {
 Скриншоты основных экранов клиентского приложения, иллюстрирующие
 функциональность, описанную в главе~2 диссертации.
 
+\filbreak
 \subsection*{Б.1\quad Экран входа и регистрации}
 
 \image{ui-auth.png}{Экран входа и регистрации в веб-версии клиента}{fig:ui-auth}{0.7}
 
+\filbreak
 \subsection*{Б.2\quad Кабинет преподавателя}
 
 Список курсов, экран банка вопросов, психометрическая карточка
@@ -269,6 +271,7 @@ Color alphaColor(double a, ColorScheme scheme) {
 \image{ui-bank-editor.png}{Редактор банка вопросов}{fig:ui-bank-editor}{0.7}
 \image{ui-bank-analytics.png}{Психометрическая карточка банка вопросов}{fig:ui-bank-analytics}{0.7}
 
+\filbreak
 \subsection*{Б.3\quad Кабинет студента}
 
 Ввод кода сессии, экран ответа на вопрос, итоговый экран сессии.
@@ -277,10 +280,12 @@ Color alphaColor(double a, ColorScheme scheme) {
 \image{ui-room-active.png}{Активный вопрос интерактивной сессии}{fig:ui-room-active}{0.7}
 \image{ui-room-finished.png}{Итоговый экран сессии}{fig:ui-room-finished}{0.7}
 
+\filbreak
 \subsection*{Б.4\quad Экран интервального повторения SM-2}
 
 \image{ui-sm2.png}{Экран индивидуального повторения по SM-2}{fig:ui-sm2}{0.7}
 
+\filbreak
 \subsection*{Б.5\quad Профиль и игровая прогрессия}
 
 XP, уровень, серия дней, гистограмма XP за последние 14 дней,
@@ -288,6 +293,7 @@ XP, уровень, серия дней, гистограмма XP за посл
 
 \image{ui-profile.png}{Профиль студента: XP, уровень, бейджи}{fig:ui-profile}{0.7}
 
+\filbreak
 \subsection*{Б.6\quad Лидерборд интерактивной сессии}
 
 \image{ui-leaderboard.png}{Лидерборд live-сессии}{fig:ui-leaderboard}{0.7}
@@ -302,6 +308,7 @@ XP, уровень, серия дней, гистограмма XP за посл
 и~3.6 диссертации. Заполненные протоколы прилагаются к работе
 после завершения апробации в текущем семестре.
 
+\filbreak
 \subsection*{В.1\quad Форма анкеты участника эксперимента}
 
 Анкета заполняется студентом перед началом эксперимента
@@ -318,6 +325,7 @@ XP, уровень, серия дней, гистограмма XP за посл
           выборки эксперимента: \,да\,/\,нет
 \end{itemize}
 
+\filbreak
 \subsection*{В.2\quad Структура pre-/post-/retention-теста}
 
 Тестовый инструмент: 18~пунктов с одиночным выбором по содержанию
@@ -330,6 +338,7 @@ XP, уровень, серия дней, гистограмма XP за посл
     \item Retention-test --- через 7--14 суток после post-test;
 \end{itemize}
 
+\filbreak
 \subsection*{В.3\quad Форма обезличенной таблицы результатов}
 
 Таблица заполняется по итогам каждого замера и используется как вход
@@ -350,6 +359,7 @@ XP, уровень, серия дней, гистограмма XP за посл
 \section*{ПРИЛОЖЕНИЕ Г. СПИСОК СОКРАЩЕНИЙ И ОБОЗНАЧЕНИЙ} \label{application_G}
 \addcontentsline{toc}{section}{ПРИЛОЖЕНИЕ Г. Список сокращений и обозначений}
 
+\filbreak
 \subsection*{Г.1\quad Аббревиатуры}
 
 \begin{description}
@@ -393,6 +403,7 @@ XP, уровень, серия дней, гистограмма XP за посл
     \item[ЭГ] --- экспериментальная группа педагогического эксперимента.
 \end{description}
 
+\filbreak
 \subsection*{Г.2\quad Основные обозначения}
 
 \begin{description}
