@@ -389,45 +389,375 @@ CREATE TABLE users (
 с полями \texttt{ef}, \texttt{interval\_days}, \texttt{repetitions},
 \texttt{due\_date}.
 
+\subsubsection*{2.9.1. Детальное описание таблиц}
+
+В настоящем подразделе приведено постановочное описание основных
+таблиц схемы данных по миграциям \texttt{0001}--\texttt{0010}.
+Для каждой таблицы указаны назначение, ключевые поля и индексы,
+обеспечивающие требуемые показатели производительности при работе
+с интерактивной сессией в реальном времени.
+
+\textbf{Таблица \texttt{users}} (миграция \texttt{0001\_init}).
+Хранит учётные записи всех ролей. Поле \texttt{email} имеет
+тип \texttt{CITEXT} (case-insensitive text), что исключает
+дублирование учётных записей с одинаковым адресом
+в различном регистре. Уникальный индекс по \texttt{email}
+обеспечивает идемпотентность регистрации.
+Поле \texttt{role} типа \texttt{user\_role} ENUM
+($\{\text{teacher},\text{student},\text{admin}\}$) задаёт ролевую
+модель доступа на уровне БД. Дополнительный индекс
+\texttt{idx\_users\_role(role)} ускоряет административные запросы
+по списку учителей или студентов.
+
+\textbf{Таблицы \texttt{courses} и \texttt{question\_banks}}
+(миграция \texttt{0002\_courses}). Курс принадлежит преподавателю;
+поле \texttt{is\_archived} реализует «мягкое удаление» курса
+(студенты сохраняют доступ к истории, но курс не показывается
+в активном списке). Частичный индекс
+\texttt{idx\_courses\_teacher(teacher\_id) WHERE NOT is\_archived}
+ускоряет запрос «мои активные курсы» и сокращает размер индекса.
+Банк вопросов привязан к курсу через \texttt{course\_id}
+с каскадным удалением; поле \texttt{source} типа \texttt{TEXT}
+со значениями $\{\text{manual},\text{edu\_gubkin},\text{moodle\_xml},$
+$\text{gift},\text{csv}\}$ указывает источник банка для аналитики
+импорта.
+
+\textbf{Таблица \texttt{questions}} (та же миграция).
+Поддерживает все типы вопросов через ENUM \texttt{question\_kind}
+$=\{\text{single\_choice},\text{multi\_choice},\text{open\_text},
+\text{rating},\text{qna},\text{true\_false},\text{numerical}\}$
+(последние два добавлены миграцией \texttt{0009}). Структура
+вариантов ответа хранится в \texttt{JSONB}-полях
+\texttt{options} (массив вариантов) и \texttt{correct}
+(индексы или значения правильного ответа), что обеспечивает
+гибкость без необходимости изменения схемы при добавлении
+новых типов вопросов. Дополнительные поля:
+\texttt{difficulty SMALLINT} ($1$--$5$, используется в формуле
+XP \eqref{eq:xp}), \texttt{topic TEXT} (тема внутри банка),
+\texttt{time\_limit\_sec INTEGER} (индивидуальный лимит времени
+на вопрос). Индексы \texttt{idx\_questions\_bank(bank\_id)}
+и \texttt{idx\_questions\_topic(bank\_id, topic)} ускоряют
+выборку вопросов банка и фильтрацию по теме.
+
+\textbf{Таблица \texttt{rooms}} (миграция \texttt{0003\_rooms}).
+Состояние интерактивной сессии. Поле \texttt{code CHAR(6) UNIQUE}
+хранит шестизначный код доступа в формате цифр для удобства
+произношения вслух и быстрого набора студентами на мобильных
+устройствах; уникальность гарантирована индексом.
+Поле \texttt{status} типа \texttt{room\_status} ENUM
+$=\{\text{created},\text{waiting},\text{active},\text{review},
+\text{finished}\}$ управляет конечным автоматом из подраздела~2.3.
+Массивы \texttt{question\_order UUID[]} и \texttt{asked\_question\_ids
+UUID[]} хранят соответственно полную последовательность вопросов
+сессии и идентификаторы уже заданных. Структура \texttt{settings
+JSONB} содержит параметры режима (\texttt{mode}, \texttt{shuffle},
+\texttt{auto\_advance}).
+
+\textbf{Таблица \texttt{participants}} (та же миграция; расширена
+\texttt{0005}, \texttt{0007}, \texttt{0010}). Связывает пользователей
+с комнатами по уникальному ключу \texttt{(room\_id, user\_id)}.
+Полями \texttt{current\_question\_idx INTEGER} и
+\texttt{finished\_at\_session TIMESTAMPTZ} (\texttt{0005})
+реализуется per-student индексация для режимов \texttt{timer}
+и \texttt{race}, в которых каждый студент проходит вопросы
+в своём темпе. Поле \texttt{pending\_repeat\_question\_ids UUID[]}
+(\texttt{0007}) формирует очередь повторов на неправильно
+отвеченные вопросы внутри той же сессии, что повышает
+обучающую ценность solo-режимов. Индекс
+\texttt{idx\_participants\_progress(room\_id, current\_question\_idx)}
+ускоряет лидерборд solo-режима.
+
+\textbf{Таблица \texttt{answers}} (та же миграция; расширена
+\texttt{0008}). Уникальный составной ключ
+\texttt{(room\_id, question\_id, participant\_id)}
+предотвращает повторные отправки и обеспечивает идемпотентность
+обработки сетевых ретраев. Поле \texttt{value JSONB} хранит
+выбор студента (индексы вариантов, текст, число); \texttt{is\_correct
+BOOLEAN} вычисляется сервером на этапе записи и не редактируется
+клиентом; \texttt{elapsed\_ms INTEGER} фиксирует время ответа
+в миллисекундах --- единая шкала для формирования q-score
+(формула~\eqref{eq:q-score}). Поле \texttt{attempts INTEGER}
+(\texttt{0008}, по умолчанию 1) используется при повторе вопроса
+внутри сессии после неправильного ответа: первая попытка
+учитывается в XP и в SM-2, последующие --- только в SM-2.
+
+\textbf{Таблица \texttt{xp\_log}} (миграция
+\texttt{0004\_gamification}). Журнал начислений XP в виде
+неизменяемой ленты записей с полями \texttt{delta INTEGER},
+\texttt{reason TEXT}
+$\in\{\text{answer},\text{streak\_bonus},\text{badge\_bonus},
+\text{manual\_adjust}\}$ и привязкой \texttt{answer\_id UUID
+FK answers}. Такая декомпозиция позволяет:
+(1) восстановить полную историю XP студента на любой момент
+времени; (2) строить аналитические запросы по периодам
+(гистограмма XP за 14 дней); (3) производить «откат» начислений
+в случае подтверждённой жалобы на инцидент. Индекс
+\texttt{idx\_xp\_log\_user\_course(user\_id, course\_id, created\_at
+DESC)} оптимизирован под выборку «последние N записей».
+
+\textbf{Таблица \texttt{user\_progress}} (та же миграция).
+Денормализованный агрегат с первичным ключом
+\texttt{(user\_id, course\_id)}: \texttt{total\_xp INTEGER},
+\texttt{level INTEGER}, \texttt{streak\_days INTEGER},
+\texttt{last\_active DATE}. Денормализация мотивирована
+требованием обновлять лидерборд за время не более 100~мс
+при $N = 100$ одновременно отвечающих студентов; пересчёт
+агрегата по \texttt{xp\_log} в реальном времени не удовлетворяет
+этому ограничению. Согласованность обеспечивается двумя
+параллельными операциями в одной транзакции: вставка записи
+в \texttt{xp\_log} и инкрементное обновление
+\texttt{user\_progress} (\texttt{UPDATE \dots SET total\_xp =
+total\_xp + \$1}).
+
+\textbf{Таблицы \texttt{badges} и \texttt{user\_badges}}
+(миграции \texttt{0004} и \texttt{0006}). Справочник бейджей
+с естественным ключом \texttt{code TEXT PK} (символьный
+идентификатор: \texttt{first\_correct}, \texttt{perfect\_round},
+\texttt{quick\_thinker}, \texttt{streak\_3}, \texttt{streak\_7},
+\texttt{level\_5}, \texttt{level\_10}, \texttt{xp\_1000},
+\texttt{reliability\_apprentice}) и поля
+\texttt{title}, \texttt{description}, \texttt{icon} (имена
+иконок Material Design 3). Таблица \texttt{user\_badges}
+с первичным ключом \texttt{(user\_id, badge\_code, course\_id)}
+обеспечивает идемпотентность выдачи через
+\texttt{INSERT \dots ON CONFLICT DO NOTHING}.
+
+\textbf{Таблица \texttt{sm2\_states}} (миграция \texttt{0004}).
+Состояние интервального повторения для пары
+\texttt{(user\_id, question\_id)} --- первичный ключ. Поля
+\texttt{ef REAL DEFAULT 2.5} (коэффициент лёгкости, минимум 1.3
+в соответствии с алгоритмом~\cite{wozniak1990}),
+\texttt{interval\_days INTEGER}, \texttt{repetitions INTEGER},
+\texttt{due\_date DATE}, \texttt{last\_reviewed\_at TIMESTAMPTZ}.
+Индекс \texttt{idx\_sm2\_due(user\_id, due\_date)} обеспечивает
+константное по числу вопросов время выборки карточек,
+запланированных на сегодня
+($\text{due\_date} \leq \text{CURRENT\_DATE}$),
+что критично при росте банка SM\textendash 2-состояний
+до десятков тысяч записей.
+
+ER-связи между таблицами реализованы через внешние ключи
+с правилом удаления \texttt{ON DELETE CASCADE} для родительских
+зависимостей в пределах одного курса (например, удаление курса
+каскадно удаляет банки, вопросы, комнаты, ответы; удаление
+пользователя --- только его участия и ответы, но не курсы,
+переданные другому преподавателю по передаче владения).
+
 \subsection{REST API и WebSocket-протокол}
 
-\textbf{REST API} соответствует спецификации OpenAPI 3.0.
-Семейство эндпоинтов:
+REST API сервиса спроектирован в стиле, близком к REST с элементами
+RPC для управляющих переходов конечного автомата комнаты
+(\texttt{/start}, \texttt{/next}, \texttt{/review}, \texttt{/finish}).
+Все эндпоинты сгруппированы под префиксом \texttt{/api/v1}, что
+позволяет вводить мажорные версии API без слома обратной совместимости.
+Параллельно работает WebSocket-канал \texttt{/ws/rooms/\{id\}}
+для двусторонней связи в реальном времени. Аутентификация в обоих
+каналах --- JWT в формате access-token (для WebSocket --- через
+query-параметр \texttt{?token=}, поскольку браузерный WebSocket-клиент
+не позволяет передавать заголовки).
+
+\subsubsection*{2.10.1. Семейство эндпоинтов аутентификации}
+
+Эндпоинты регистрации, входа, обновления токена и просмотра
+профиля размещены под \texttt{/api/v1/auth/*}.
 \begin{itemize}
-    \item \texttt{POST /api/v1/auth/register},
-          \texttt{POST /api/v1/auth/login},
-          \texttt{GET  /api/v1/auth/me};
-    \item \texttt{GET/POST/PATCH/DELETE /api/v1/courses};
-    \item \texttt{POST /api/v1/courses/\{id\}/banks/import}
-          --- импорт банка вопросов из LMS;
-    \item \texttt{POST /api/v1/rooms} --- создание комнаты,
-          возвращает шестизначный код;
-    \item \texttt{POST /api/v1/rooms/\{id\}/start},
-          \texttt{POST /api/v1/rooms/\{id\}/next};
-    \item \texttt{POST /api/v1/rooms/join} --- студент подключается
-          по коду;
-    \item \texttt{POST /api/v1/rooms/\{id\}/answers} --- отправка
-          ответа.
+    \item \texttt{POST /auth/register} --- DTO запроса:
+          \texttt{\{email, password, full\_name, role\}}, где
+          \texttt{role} принимает значения \texttt{teacher} или
+          \texttt{student} (создание администраторов выполняется
+          только через миграцию или административный эндпоинт);
+          валидация пароля --- длина $\in [8, 72]$, обязательно
+          наличие буквы и цифры, проверка против блэклиста
+          наиболее частых паролей. Ответ: пара токенов и профиль.
+    \item \texttt{POST /auth/login} --- DTO запроса:
+          \texttt{\{email, password\}}; вход case-insensitive
+          по полю \texttt{email}. Ответ совпадает с регистрацией.
+          В случае неверной пары возвращается обобщённый код
+          \texttt{401} без раскрытия, какое именно поле некорректно
+          (защита от энумерации существующих учётных записей).
+    \item \texttt{POST /auth/refresh} --- DTO запроса:
+          \texttt{\{refresh\_token\}}; реализована \emph{ротация}
+          refresh-токенов: каждый успешный обмен выдаёт новую пару
+          access и refresh, старый refresh-токен инвалидируется
+          на серверной стороне.
+    \item \texttt{GET /auth/me} --- возвращает профиль текущего
+          пользователя по access-токену; используется клиентом
+          для восстановления состояния при перезапуске приложения.
 \end{itemize}
 
-\textbf{WebSocket-протокол.} Клиент устанавливает соединение
-с эндпоинтом \texttt{/ws/rooms/\{id\}} и аутентифицируется
-JWT-токеном через query-параметр (для совместимости с браузерами).
-Все события передаются в формате JSON с обязательными полями
-\texttt{type} и \texttt{data}. Основные типы событий:
+\subsubsection*{2.10.2. Управление курсами, банками и вопросами}
+
+Управление содержанием курса доступно только преподавателю-владельцу
+и администратору; контроль продублирован уникальными ограничениями
+БД (\textit{tenant isolation}).
 \begin{itemize}
-    \item \texttt{room.state\_changed} --- изменение статуса комнаты;
-    \item \texttt{question.activated} --- сервер активировал новый
-          вопрос (от сервера к клиенту);
+    \item \texttt{GET /courses} --- список курсов текущего
+          пользователя (для преподавателя --- его курсы; для студента
+          --- курсы, в комнатах которых он участвовал);
+    \item \texttt{POST /courses} --- создание курса
+          (\texttt{\{title, description\}});
+    \item \texttt{PATCH /courses/:id}, \texttt{DELETE /courses/:id}
+          --- редактирование и архивация (мягкое удаление через
+          \texttt{is\_archived = true});
+    \item \texttt{GET /courses/:id/banks},
+          \texttt{POST /courses/:id/banks} --- список и создание
+          банков вопросов;
+    \item \texttt{GET /banks/:id/questions},
+          \texttt{POST /banks/:id/questions} --- управление вопросами
+          банка;
+    \item \texttt{POST /banks/:id/questions/import} --- импорт
+          банка (DTO: \texttt{\{format, content\}}, где \texttt{format}
+          $\in\{\text{moodle\_xml},\text{gift}\}$). Обработчик
+          выполняет парсинг, валидирует пункты, возвращает
+          список \texttt{ImportWarning}: количество принятых
+          вопросов, пропущенных (с причиной) и предупреждений
+          по конкретным пунктам;
+    \item \texttt{GET /banks/:id/analytics} --- сводный
+          психометрический отчёт по банку: $\alpha$ Кронбаха,
+          распределение индекса трудности $p_i$ по пунктам,
+          точечно-бисериальная корреляция $r_{pb, i}$ для каждого
+          пункта, цветовая интерпретация. Возвращается только
+          владельцу банка.
+\end{itemize}
+
+\subsubsection*{2.10.3. Интерактивные сессии}
+
+Семейство \texttt{/api/v1/rooms/*} реализует жизненный цикл
+комнаты и интеракции студентов.
+\begin{itemize}
+    \item \texttt{POST /rooms} --- создание комнаты;
+          DTO: \texttt{\{course\_id, bank\_id, title, mode,
+          shuffle, auto\_advance\}}; сервер генерирует шестизначный
+          \texttt{code} с проверкой коллизии, формирует
+          \texttt{question\_order} в соответствии с флагом
+          \texttt{shuffle};
+    \item \texttt{POST /rooms/join} --- подключение студента
+          по коду; DTO: \texttt{\{code, nickname\}}; создаёт
+          запись в \texttt{participants} (идемпотентно благодаря
+          уникальному ключу \texttt{(room\_id, user\_id)});
+    \item \texttt{POST /rooms/:id/start},
+          \texttt{POST /rooms/:id/next},
+          \texttt{POST /rooms/:id/review},
+          \texttt{POST /rooms/:id/finish} --- управляющие переходы
+          состояния комнаты; вызываются преподавателем-владельцем;
+    \item \texttt{POST /rooms/:id/answers} --- отправка ответа
+          для группового режима \texttt{classic};
+          DTO: \texttt{\{question\_id, value, elapsed\_ms\}};
+          ответ: \texttt{\{correct, awarded\_xp, new\_badges\}};
+    \item \texttt{GET /rooms/:id/my/state},
+          \texttt{POST /rooms/:id/my/answer} --- персональные
+          эндпоинты для solo-режимов \texttt{timer} и \texttt{race},
+          возвращающие/принимающие индивидуальный текущий вопрос;
+    \item \texttt{GET /rooms/:id/leaderboard} --- сводный
+          лидерборд комнаты по сумме XP с упорядочением и
+          положением каждого участника.
+\end{itemize}
+
+\subsubsection*{2.10.4. Личный кабинет студента}
+
+Эндпоинты под \texttt{/api/v1/me/*} обеспечивают доступ к
+собственному прогрессу, повторению по SM\textendash 2 и истории
+бейджей.
+\begin{itemize}
+    \item \texttt{PATCH /me} --- редактирование имени;
+    \item \texttt{POST /me/change-password} --- DTO:
+          \texttt{\{old\_password, new\_password\}}; новый пароль
+          валидируется по той же политике, что и при регистрации;
+    \item \texttt{GET /me/progress} --- агрегированный прогресс
+          по всем курсам с полями
+          \texttt{\{course, total\_xp, level, streak\_days,
+          xp\_to\_next\}};
+    \item \texttt{GET /me/progress/:cid} --- детальный прогресс
+          по конкретному курсу с гистограммой XP за последние
+          14 дней (используется на главном экране студента);
+    \item \texttt{GET /me/badges} --- полный каталог бейджей
+          с отметкой о владении (\texttt{earned, awarded\_at,
+          course\_id});
+    \item \texttt{GET /me/sm2/due} --- карточки на повторение,
+          у которых \texttt{due\_date $\leq$ CURRENT\_DATE},
+          с лимитом 30 пунктов на сессию повторения;
+    \item \texttt{POST /me/sm2/answer} --- DTO:
+          \texttt{\{question\_id, value, elapsed\_ms\}}; обработчик
+          формирует q-score по правилу~\eqref{eq:q-score},
+          вызывает \texttt{Sm2Update} (раздел~2.5), обновляет
+          состояние повторения; в ответе возвращает
+          \texttt{\{correct, q, interval\_days, next\_due\}}.
+\end{itemize}
+
+\subsubsection*{2.10.5. Административные эндпоинты}
+
+Под префиксом \texttt{/api/v1/admin/*} располагаются эндпоинты,
+доступные только пользователю с ролью \texttt{admin}. Они
+включают: получение глобальной статистики
+(\texttt{GET /admin/stats}); полнотекстовый поиск и фильтрацию
+пользователей по роли (\texttt{GET /admin/users?role=}); полную
+детализацию профиля по идентификатору
+(\texttt{GET /admin/users/:id}) --- для преподавателя возвращает
+вложенные списки курсов и комнат, для студента --- прогресс
+и историю участия; редактирование, удаление и принудительный
+сброс пароля
+(\texttt{PATCH /admin/users/:id}, \texttt{DELETE /admin/users/:id},
+\texttt{POST /admin/users/:id/reset-password}); просмотр и
+управление всеми комнатами и ответами
+(\texttt{GET /admin/rooms?status=}, \texttt{GET /admin/rooms/:id/answers},
+\texttt{DELETE /admin/answers/:id}).
+
+\subsubsection*{2.10.6. Загрузка медиа}
+
+Эндпоинт \texttt{POST /api/v1/uploads} принимает изображение
+в формате \texttt{multipart/form-data} (поле \texttt{file}),
+поддерживает форматы JPEG, PNG, GIF, WebP с проверкой MIME-типа
+по сигнатуре файла (а не только по расширению), сохраняет файл
+в директорию \texttt{/srv/uploads} с уникальным именем
+\texttt{<uuid>.<ext>} и возвращает относительный URL для доступа.
+Лимит размера тела запроса --- 5~МиБ. Альтернативный эндпоинт
+\texttt{POST /api/v1/uploads/from-url} принимает URL изображения
+или data URI (\texttt{data:image/png;base64,\dots}) и выполняет
+скачивание серверной стороной, что снимает с клиента
+необходимость передачи бинарных данных по WebSocket
+и обеспечивает кеширование на стороне сервиса.
+
+\subsubsection*{2.10.7. Протокол WebSocket}
+
+Соединение устанавливается на \texttt{GET /ws/rooms/\{id\}}
+с access-токеном в query-параметре. Сервер на этапе апгрейда
+проверяет JWT, принадлежность ресурса (\textit{IDOR-защита}:
+преподаватель допускается только как владелец курса комнаты,
+студент --- только как зарегистрированный участник, администратор
+--- безусловно) и регистрирует клиента в хабе.
+
+Все сообщения передаются в формате JSON со структурой
+$\{$\texttt{type}, \texttt{payload}$\}$, где \texttt{type} ---
+строковый идентификатор типа события. Основные типы (от сервера
+к клиенту):
+\begin{itemize}
+    \item \texttt{room.state\_changed} --- смена статуса комнаты;
+          payload: \texttt{\{status, current\_question\}};
+    \item \texttt{question.activated} --- сервер активировал
+          новый вопрос; payload: \texttt{\{question, started\_at,
+          time\_limit\_sec\}};
     \item \texttt{question.answered} --- студент отправил ответ
-          (преподавателю в реальном времени);
-    \item \texttt{leaderboard.updated} --- обновление таблицы
-          лидеров после ответа.
+          (видно только преподавателю); payload:
+          \texttt{\{answers\_received, total\_participants,
+          last\_nickname\}};
+    \item \texttt{question.reviewed} --- переход в фазу разбора,
+          показ правильного варианта (запускается преподавателем);
+          payload: \texttt{\{correct, distribution\}};
+    \item \texttt{leaderboard.updated} --- изменение позиций
+          в лидерборде после очередного ответа;
+    \item \texttt{my.finished} --- событие индивидуальной
+          трансляции (\texttt{Hub.SendTo}) для solo-режимов:
+          сообщает конкретному студенту, что он завершил
+          прохождение комнаты.
 \end{itemize}
 
-Внутренняя реализация: WebSocket-хаб подписан на Redis pub/sub,
-что позволяет горизонтально масштабировать API в нескольких
-инстансах без потери real-time-канала между участниками сессии.
+Внутренняя реализация хаба декомпозируется на: \texttt{Client}
+(одна горутина чтения, одна записи на сокет, очередь сообщений
+с буфером 64); \texttt{Hub} (центральный реактор, обрабатывающий
+регистрацию, отключение и широковещательную/адресную рассылку);
+подписка на каналы Redis Pub/Sub с префиксом \texttt{room:<id>:*}
+обеспечивает доставку событий между несколькими репликами API
+без потери real-time-канала между участниками сессии.
 
 \subsection{Интеграция с LMS edu.gubkin}
 
