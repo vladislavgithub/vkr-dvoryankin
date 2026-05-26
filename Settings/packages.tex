@@ -47,8 +47,12 @@
     style=gost-numeric,
     language=auto,
     autolang=other,
-    sorting=none
+    sorting=nty
 ]{biblatex}
+% Принудительная сортировка: сначала русскоязычные источники,
+% затем иностранные. Реализуется через поле presort в refs.bib:
+% русские записи — presort={a}, латинские — presort={z}.
+% При sorting=nty biber сортирует presort → name → year → title.
 \addbibresource{refs.bib}
 
 \usepackage{fancyhdr} % заголовок
