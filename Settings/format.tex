@@ -207,6 +207,14 @@
 \titleformat{\subsection}[block]
     {\fontsize{14pt}{17pt}\bfseries\selectfont}
     {\hspace*{1.25cm}\thesubsection.}{0.5em}{\eqSubsectionFormat}
+% Подразделы 1.X.Y оформлены тем же стилем, что и 1.X --- bold,
+% межстрочный 1.5, без отступа от тела абзаца. В оглавление
+% не включаются: tocdepth ограничен уровнем subsection.
+\titleformat{\subsubsection}[block]
+    {\fontsize{14pt}{17pt}\bfseries\selectfont}
+    {\hspace*{1.25cm}\thesubsubsection.}{0.5em}{\eqSubsectionFormat}
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
 % \titlespacing*{<команда>}{<отступ слева>}{<до>}{<после>}
 % Все заголовки — левый край 0pt; абзацный отступ 1.25 см для метки
 % («ГЛАВА N.», «N.M.») задаётся через \hspace*{1.25cm} в \titleformat.
@@ -217,6 +225,7 @@
 \titlespacing*{\section}      {0pt}{0pt}{0pt}
 \titlespacing*{name=\section,numberless}{0pt}{0pt}{0pt}
 \titlespacing*{\subsection}   {0pt}{0pt}{0pt}
+\titlespacing*{\subsubsection}{0pt}{0pt}{0pt}
 
 % настройка подсветки кода и окружения для листингов
 %\usemintedstyle{colorful} % делает подсветку для кода
