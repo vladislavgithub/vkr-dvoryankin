@@ -15,12 +15,19 @@
           keywordstyle=\color{blue},
           deletekeywords={local},
           breaklines=true,
-          commentstyle=\color{teal},   
+          commentstyle=\color{teal},
           breakatwhitespace=false,
           showspaces=false,
           showstringspaces=false,
           escapeinside={(*}{*)},
-          mathescape=true
+          % mathescape=false: оставляем минусы в коде как ASCII-дефис,
+          % не превращая в матрежим (иначе - подменяется на Unicode-минус).
+          mathescape=false,
+          extendedchars=true,
+          % literate: явная подмена дефиса на дефис толщиной 1 — заставляет
+          % listings рендерить «-» как ASCII-символ, что предотвращает
+          % замену на Unicode-минус.
+          literate={-}{{-}}1
     }
 \usepackage{lstfiracode}
 
