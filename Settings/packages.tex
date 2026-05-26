@@ -55,6 +55,16 @@
 % При sorting=nty biber сортирует presort → name → year → title.
 \addbibresource{refs.bib}
 
+% Переопределение биб-локализации под ГОСТ Р 7.0.100-2018:
+% - urlseen ('дата обращения' вместо biblatex-gost-дефолта 'дата обр.')
+% - bibrangedash (короткое тире en dash в диапазонах страниц '23–31'
+%   вместо длинного тире, которое biblatex-gost подставляет в русском
+%   режиме).
+\DefineBibliographyStrings{russian}{%
+    urlseen = {дата обращения},
+}
+\AtBeginDocument{\def\bibrangedash{\textendash}}
+
 \usepackage{fancyhdr} % заголовок
 
 \usepackage{enumitem} % списки
