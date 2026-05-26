@@ -1,8 +1,6 @@
 @startuml c4-containers
 !include <C4/C4_Container>
 
-title Контейнерная диаграмма C4 сервиса EduQuiz
-
 LAYOUT_WITH_LEGEND()
 
 Person(student, "Обучающийся")

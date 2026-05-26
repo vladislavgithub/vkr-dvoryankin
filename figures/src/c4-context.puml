@@ -1,8 +1,6 @@
 @startuml c4-context
 !include <C4/C4_Context>
 
-title Контекстная диаграмма C4 сервиса EduQuiz
-
 LAYOUT_WITH_LEGEND()
 
 Person(student, "Обучающийся", "Подключается к интерактивным сессиям, отвечает на вопросы, повторяет материал по SM-2.")

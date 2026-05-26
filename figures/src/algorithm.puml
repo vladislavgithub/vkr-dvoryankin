@@ -5,8 +5,6 @@ skinparam defaultFontSize 13
 skinparam ActivityBackgroundColor #FAFAFA
 skinparam ActivityBorderColor #444
 
-title Алгоритм работы сервиса EduQuiz
-
 start
 :Запуск приложения;
 :Инициализация Flutter / Riverpod;
