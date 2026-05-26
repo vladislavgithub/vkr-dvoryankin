@@ -1,0 +1,33 @@
+@startuml state-session
+' Конечный автомат состояний интерактивной учебной сессии EduQuiz
+skinparam dpi 150
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 12
+skinparam ArrowColor #333333
+skinparam state {
+    BackgroundColor #F5F5F5
+    BorderColor #333333
+    FontColor #000000
+}
+
+[*] --> created : преподаватель\nсоздал сессию,\nсгенерирован код
+
+state created : комната создана,\nкод выпущен
+state waiting : открыто\nподключение\nучастников
+state active : активен вопрос,\nидёт сбор ответов
+state review : показ\nправильного ответа\nи статистики
+state finished : сессия завершена,\nрезультаты\nзафиксированы
+
+created --> waiting : открытие\nподключения
+waiting --> active : активация\nпервого вопроса
+active --> review : истечение\nтаймера / переход\nпреподавателя
+review --> active : следующий\nвопрос
+review --> finished : завершение\nсессии
+active --> finished : форс-завершение
+waiting --> finished : отмена
+
+finished --> [*]
+
+@enduml

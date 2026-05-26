@@ -1,0 +1,113 @@
+@startuml er-diagram
+' ER-диаграмма основных сущностей базы данных EduQuiz
+skinparam dpi 150
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 11
+skinparam ArrowColor #333333
+skinparam classBackgroundColor #F5F5F5
+skinparam classBorderColor #333333
+hide circle
+hide methods
+
+entity "users" as users {
+    + id : UUID <<PK>>
+    --
+    email : CITEXT <<UNIQUE>>
+    password_hash : TEXT
+    full_name : TEXT
+    role : user_role
+}
+
+entity "courses" as courses {
+    + id : UUID <<PK>>
+    --
+    teacher_id : UUID <<FK>>
+    title : TEXT
+    description : TEXT
+}
+
+entity "question_banks" as banks {
+    + id : UUID <<PK>>
+    --
+    course_id : UUID <<FK>>
+    title : TEXT
+    source : TEXT
+}
+
+entity "questions" as questions {
+    + id : UUID <<PK>>
+    --
+    bank_id : UUID <<FK>>
+    kind : question_kind
+    text : TEXT
+    options : JSONB
+    correct : JSONB
+    difficulty : SMALLINT
+}
+
+entity "rooms" as rooms {
+    + id : UUID <<PK>>
+    --
+    course_id : UUID <<FK>>
+    bank_id : UUID <<FK>>
+    code : CHAR(6) <<UNIQUE>>
+    status : room_status
+    settings : JSONB
+}
+
+entity "participants" as participants {
+    + id : UUID <<PK>>
+    --
+    room_id : UUID <<FK>>
+    user_id : UUID <<FK>>
+    nickname : TEXT
+}
+
+entity "answers" as answers {
+    + id : UUID <<PK>>
+    --
+    room_id : UUID <<FK>>
+    question_id : UUID <<FK>>
+    participant_id : UUID <<FK>>
+    value : JSONB
+    is_correct : BOOLEAN
+    elapsed_ms : INTEGER
+    awarded_xp : INTEGER
+}
+
+entity "user_progress" as progress {
+    + user_id : UUID <<PK,FK>>
+    + course_id : UUID <<PK,FK>>
+    --
+    total_xp : INTEGER
+    level : INTEGER
+    streak_days : INTEGER
+}
+
+entity "sm2_states" as sm2 {
+    + user_id : UUID <<PK,FK>>
+    + question_id : UUID <<PK,FK>>
+    --
+    ef : REAL
+    interval_days : INTEGER
+    repetitions : INTEGER
+    due_date : DATE
+}
+
+users ||--o{ courses : преподаёт
+courses ||--o{ banks : содержит
+banks ||--o{ questions : включает
+courses ||--o{ rooms : проводится в
+banks ||--o{ rooms : использует
+rooms ||--o{ participants : имеет
+users ||--o{ participants : участвует
+participants ||--o{ answers : даёт
+questions ||--o{ answers : на
+users ||--o{ progress : имеет
+courses ||--o{ progress : по
+users ||--o{ sm2 : повторяет
+questions ||--o{ sm2 : по
+
+@enduml
