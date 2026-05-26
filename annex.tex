@@ -11,15 +11,15 @@
 В настоящем приложении приведены ключевые фрагменты исходного
 кода реализованного сервиса, соответствующие моделям, описанным
 в главе~2 диссертации. Полный исходный код опубликован в репозиториях
-\texttt{eduquiz-backend} (серверная часть на языке Go) и
-\texttt{eduquiz-flutter} (кроссплатформенный клиент на Flutter).
+eduquiz-backend (серверная часть на языке Go) и
+eduquiz-flutter (кроссплатформенный клиент на Flutter).
 
 \needspace{8\baselineskip}
 \subsection*{А.1\quad Реализация алгоритма SM-2}
 
 Реализация чистая, не зависящая от инфраструктуры; используется
 как обработчиками REST-запросов, так и в юнит-тестах. Файл
-\texttt{internal/services/sm2.go} серверной части.
+internal/services/sm2.go серверной части.
 
 \begin{lstlisting}[caption={Алгоритм интервального повторения SM-2},label=lst:sm2-go]
 // Sm2State хранит параметры повторения карточки для пары (студент, вопрос).
@@ -67,7 +67,7 @@ func Sm2Update(s Sm2State, q int, now time.Time) Sm2State {
 
 Оценка $q$ для алгоритма SM-2 формируется автоматически
 по корректности и времени ответа без явного запроса у обучающегося.
-Фрагмент из обработчика ответа в файле \texttt{internal/handlers/rooms.go}.
+Фрагмент из обработчика ответа в файле internal/handlers/rooms.go.
 
 \begin{lstlisting}[caption={Формирование q-score из (корректность $\times$ время)},label=lst:qscore-go]
 // sm2QScore выводит q in [0,5] из факта правильности и скорости ответа.
@@ -97,7 +97,7 @@ func sm2QScore(correct bool, elapsedMs, timeLimitMs int) int {
 \subsection*{А.3\quad Расчёт очков опыта (XP)}
 
 Реализация формулы~\eqref{eq:xp} из раздела~2.4. Файл
-\texttt{internal/services/xp.go} серверной части.
+internal/services/xp.go серверной части.
 
 \begin{lstlisting}[caption={Расчёт XP за один ответ},label=lst:xp-go]
 type XPParams struct {
@@ -155,7 +155,7 @@ func LevelFromXP(xp int) int {
 
 Реализация формулы~\eqref{eq:cronbach}, индекса трудности $p_i$
 и точечно-бисериальной корреляции $r_{pb,i}$. Файл
-\texttt{internal/services/analytics.go}.
+internal/services/analytics.go.
 
 \begin{lstlisting}[caption={Расчёт $\alpha$ Кронбаха и статистик пунктов},label=lst:analytics-go]
 // AnalyzeBank вычисляет alpha + статистики каждого пункта по матрице
@@ -221,7 +221,7 @@ func AnalyzeBank(responses [][]int) BankAnalytics {
 \needspace{8\baselineskip}
 \subsection*{А.5\quad Цветовая интерпретация значения $\alpha$ на клиенте}
 
-Фрагмент из файла \texttt{lib/features/teacher/\allowbreak bank\_analytics\_screen.dart}
+Фрагмент из файла lib/features/teacher/\allowbreak bank\_analytics\_screen.dart
 клиентской части (Flutter). Цветовая интерпретация значения $\alpha$
 и флажки качества пунктов используются преподавателем для
 итеративного улучшения банка вопросов.
