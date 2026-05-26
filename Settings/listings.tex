@@ -22,7 +22,13 @@
           escapeinside={(*}{*)},
           mathescape=false,
           keepspaces=true,
-          columns=fixed,
+          % columns=flexible: разрешает breaklines работать корректно
+          % на длинных строках кода (columns=fixed блокировал перенос).
+          columns=flexible,
+          % postbreak: визуальный значок ↪ перед перенесённой частью
+          % длинной строки кода — стандартный приём в техдоках.
+          postbreak=\mbox{\textcolor{teal}{$\hookrightarrow$}\space},
+          breakindent=2em,
           extendedchars=true,
           tabsize=4,
           % literate: принудительно рендерим ASCII-операторы из ttfamily
