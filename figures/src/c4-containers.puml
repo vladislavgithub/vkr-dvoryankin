@@ -5,7 +5,7 @@ title Контейнерная диаграмма C4 сервиса EduQuiz
 
 LAYOUT_WITH_LEGEND()
 
-Person(student, "Студент")
+Person(student, "Обучающийся")
 Person(teacher, "Преподаватель")
 
 System_Boundary(eq, "EduQuiz") {

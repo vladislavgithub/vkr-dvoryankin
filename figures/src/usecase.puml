@@ -16,7 +16,7 @@ left to right direction
 ' актёрами и между пакетами заставляют PlantUML укладывать их сверху вниз.
 
 actor "Преподаватель"  as Teacher
-actor "Студент"        as Student
+actor "Обучающийся"        as Student
 actor "Администратор"  as Admin
 
 Teacher -[hidden]down- Student
@@ -31,7 +31,7 @@ rectangle "EduQuiz" {
         usecase "Просмотр аналитики"                      as UC_Analytics
     }
 
-    package "Студент" as PS {
+    package "Обучающийся" as PS {
         usecase "Подключиться по коду"        as UC_Join
         usecase "Ответить на вопрос"          as UC_Answer
         usecase "Повторение по SM-2"          as UC_Review
