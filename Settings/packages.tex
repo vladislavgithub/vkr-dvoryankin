@@ -6,18 +6,14 @@
 
 % Подписи рисунков и таблиц по требованию кафедры АСУ:
 % «Рисунок 1 — Описание», разделитель — длинное тире.
-\usepackage{caption}
-% В пакете caption нет встроенного labelsep=emdash; определяем свой
-% разделитель как длинное тире (—), как требуют ГОСТ 7.32-2017
-% и методичка кафедры АСУ: «Рисунок N — Описание».
-\DeclareCaptionLabelSeparator{emdash}{~--- }
+\usepackage[labelsep=endash]{caption}
 % Polyglossia сбрасывает \figurename на «Рис.» при активации русского
 % языка, поэтому \renewcommand{\figurename}{...} в преамбуле и даже
 % \AtBeginDocument срабатывают ненадёжно. Самый прямой способ —
 % задать имя метки в caption-пакете через name=..., минуя \figurename.
-\captionsetup[table]    {name=Таблица, labelsep=emdash, justification=raggedleft, singlelinecheck=off, position=above}
-\captionsetup[figure]   {name=Рисунок, labelsep=emdash, justification=centering,  singlelinecheck=on,  position=below}
-\captionsetup[lstlisting]{labelsep=emdash, justification=centering, singlelinecheck=on,  position=below}
+\captionsetup[table]    {name=Таблица, labelsep=endash, justification=raggedleft, singlelinecheck=off, position=above}
+\captionsetup[figure]   {name=Рисунок, labelsep=endash, justification=centering,  singlelinecheck=on,  position=below}
+\captionsetup[lstlisting]{labelsep=endash, justification=centering, singlelinecheck=on,  position=below}
 % Дублируем через \AtBeginDocument для пакетов, читающих \figurename
 % напрямую (например, hyperref для подписей якорей).
 \AtBeginDocument{%
@@ -88,5 +84,22 @@
 % Пакет float даёт спецификатор [H] для строгой фиксации рисунка
 % в указанном месте — используется в макросе \imageH (без float).
 \usepackage{float}
+
+% Эмуляция пакета needspace (пакет в TL2026 basic недоступен
+% без прав администратора). \needspace{N\baselineskip} ломает
+% страницу, если на текущей странице осталось места меньше N.
+% Используется для предотвращения висячих заголовков перед
+% подразделами и листингами в приложениях.
+\makeatletter
+\providecommand\needspace[1]{%
+    \par\penalty-100%
+    \begingroup
+        \dimen@\pagegoal
+        \advance\dimen@-\pagetotal
+        \ifdim\dimen@<#1\relax
+            \pagebreak
+        \fi
+    \endgroup}
+\makeatother
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
