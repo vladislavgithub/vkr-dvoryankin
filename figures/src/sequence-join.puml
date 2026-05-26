@@ -1,0 +1,44 @@
+@startuml sequence-join
+' Последовательность подключения обучающегося к интерактивной сессии
+skinparam dpi 150
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 12
+skinparam ArrowColor #333333
+skinparam SequenceParticipantBorderColor #333333
+skinparam SequenceParticipantBackgroundColor #F5F5F5
+skinparam SequenceLifeLineBorderColor #999999
+skinparam SequenceActorBorderColor #333333
+skinparam SequenceActorBackgroundColor #E6F2FF
+
+actor "Преподаватель" as T
+actor "Обучающийся" as S
+participant "Клиент\nFlutter" as C
+participant "Серверное\nприложение\n(Go, Gin)" as API
+database "База данных\n(PostgreSQL)" as DB
+participant "WebSocket-хаб\n(Redis pub/sub)" as Hub
+
+T -> API : POST /rooms (course_id, bank_id, mode)
+API -> DB : INSERT INTO rooms\n(code, status=created)
+DB --> API : room_id, code
+API --> T : { room_id, code }
+
+S -> C : ввод кода сессии
+C -> API : POST /rooms/join { code, nickname }
+API -> DB : SELECT room, INSERT participant
+DB --> API : participant_id
+API --> C : { room_id, participant_id }
+
+C -> API : WS-апгрейд /ws/rooms/:id?token=...
+API -> API : проверка JWT,\nпринадлежности к комнате
+API -> Hub : подписка клиента\nна канал room:id
+Hub --> API : ok
+API --> C : соединение установлено
+
+T -> API : POST /rooms/:id/start
+API -> DB : UPDATE status=waiting
+API -> Hub : publish room.state_changed
+Hub --> C : event: room.state_changed\n(status=waiting)
+
+@enduml

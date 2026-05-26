@@ -1,0 +1,40 @@
+@startuml sequence-question
+' Цикл «вопрос -- ответ» в режиме classic
+skinparam dpi 150
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 12
+skinparam ArrowColor #333333
+skinparam SequenceParticipantBorderColor #333333
+skinparam SequenceParticipantBackgroundColor #F5F5F5
+skinparam SequenceLifeLineBorderColor #999999
+skinparam SequenceActorBorderColor #333333
+skinparam SequenceActorBackgroundColor #E6F2FF
+
+actor "Преподаватель" as T
+actor "Обучающийся" as S
+participant "Серверное\nприложение" as API
+database "БД\nPostgreSQL" as DB
+participant "WebSocket-хаб" as Hub
+
+T -> API : POST /rooms/:id/next
+API -> DB : UPDATE rooms\nstatus=active,\ncurrent_question=q
+API -> Hub : publish\nquestion.activated
+Hub --> S : event: question.activated\n(question, time_limit)
+
+note over S : обучающийся\nвыбирает вариант\nи отправляет ответ
+
+S -> API : POST /rooms/:id/answers\n{ question_id, value, elapsed_ms }
+API -> DB : INSERT answers\n(is_correct, awarded_xp)
+API -> DB : UPDATE user_progress\nUPSERT sm2_states
+API -> Hub : publish question.answered
+Hub --> T : event: question.answered\n(answers_received)
+
+T -> API : POST /rooms/:id/review
+API -> DB : UPDATE status=review
+API -> Hub : publish question.reviewed
+Hub --> S : event: question.reviewed\n(correct, distribution)
+Hub --> T : event: leaderboard.updated
+
+@enduml

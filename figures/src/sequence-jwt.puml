@@ -1,0 +1,46 @@
+@startuml sequence-jwt
+' Поток аутентификации и авторизации (JWT с парой токенов)
+skinparam dpi 150
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 12
+skinparam ArrowColor #333333
+skinparam SequenceParticipantBorderColor #333333
+skinparam SequenceParticipantBackgroundColor #F5F5F5
+skinparam SequenceLifeLineBorderColor #999999
+
+participant "Клиент" as C
+participant "Сервер\nаутентификации" as Auth
+database "БД\n(users, sessions)" as DB
+participant "Защищённый\nэндпоинт" as API
+
+C -> Auth : POST /auth/login\n{ email, password }
+Auth -> DB : SELECT user WHERE email=?
+DB --> Auth : password_hash, role
+Auth -> Auth : bcrypt.Compare\n(password, hash)
+Auth -> Auth : подпись JWT:\naccess (15 мин),\nrefresh (7 суток)
+Auth -> DB : INSERT sessions(refresh_token)
+Auth --> C : { access_token, refresh_token }
+
+note over C : клиент сохраняет\nтокены локально
+
+C -> API : GET /api/v1/courses\nAuthorization: Bearer <access>
+API -> API : проверка подписи JWT,\nизвлечение user_id и role
+API -> DB : SELECT courses\nWHERE teacher_id=user_id
+DB --> API : данные
+API --> C : 200 OK { courses }
+
+note over C : через 15 минут\naccess_token истёк
+
+C -> API : GET /api/v1/courses\nAuthorization: Bearer <expired>
+API --> C : 401 Unauthorized
+
+C -> Auth : POST /auth/refresh\n{ refresh_token }
+Auth -> DB : SELECT sessions\nWHERE refresh_token=?
+DB --> Auth : валиден
+Auth -> Auth : ротация: новая пара\nтокенов; старый refresh\nинвалидируется
+Auth -> DB : UPDATE sessions
+Auth --> C : { access_token, refresh_token }
+
+@enduml
