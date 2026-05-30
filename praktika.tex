@@ -18,6 +18,12 @@
 
 \include{Settings/listings}
 
+% В ВКР рисунки нумеруются по разделам (X.Y) — Settings/format привязывает
+% счётчик figure к section. Для отчёта по практике разделы без номеров,
+% поэтому подписи получались «Рисунок 0.1». Откатываем привязку → «Рисунок 1».
+\counterwithout{figure}{section}
+\counterwithout{table}{section}
+
 % Пути поиска картинок для отчёта по практике.
 \graphicspath{{praktika_slides/}{figures/}{Images/}}
 
@@ -30,7 +36,7 @@
 % студент. До получения файла строка закомментирована — иначе
 % xelatex упадёт с «file not found». Раскомментировать, когда
 % titulnik_praktika.pdf будет добавлен в каталог рядом с praktika.tex.
-% \includepdf[pages=-]{titulnik_praktika.pdf}
+\includepdf[pages=-]{titulnik_praktika.pdf}
 
 %%%%%%%%%%%% Оглавление %%%%%%%%%%%%%
 \tableofcontents
@@ -117,7 +123,7 @@
 
 % Используется biblatex+biber + refs.bib (как в ВКР). Через \nocite
 % подтягиваются нужные позиции; в самом отчёте инлайн-цитат нет.
-\nocite{fz273,sagindykova2015,braude2020,sailer2020,koivisto2019,wozniak1990,cronbach1951,crocker_algina,kleppmann2017,gin_docs,postgresql_docs,flutter_docs,caddy_docs,gost25010}
+\nocite{fz273,gost56939,gost25010,sagindykova2015,braude2020,sailer2020,koivisto2019,wozniak1990,cronbach1951,crocker_algina,kleppmann2017,gin_docs,postgresql_docs,flutter_docs,caddy_docs}
 \printbibliography[heading=none]
 
 \end{document}
